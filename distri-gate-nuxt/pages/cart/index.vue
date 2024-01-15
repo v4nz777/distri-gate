@@ -3,9 +3,8 @@
         <ClientOnly fallback-tag="span" fallback="Preparing cart...">
             <div class="flex gap-5 justify-center max-md:flex-col max-md:items-center">
                 <CartTable />
-                <CartSubtotal />
+                <CartSubtotal @backwards="navigateTo('/products')" @forwards="proceedToCheckout()"/>
             </div>
-            
         </ClientOnly>
         
         
@@ -14,8 +13,13 @@
 </template>
 
 <script setup lang="ts">
+    const userstore = useUserStore()
 
- 
+    
+    const proceedToCheckout = ()=> {
+        if(!userstore.isAuthenticated)userstore.showLoginFormDialog()
+        else navigateTo('/cart/checkout')
+    }
 
     definePageMeta({
         layout:'cart',

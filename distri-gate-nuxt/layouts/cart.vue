@@ -1,10 +1,10 @@
 <template>
-    <div class="w-full">
+    <div class="w-full px-5">
         <ClientOnly>
             <TopNavCart/>
         
             <main class="w-full p-10">
-                <div class="rounded-xl p-2 m-2 w-full flex justify-center">
+                <div class="rounded-xl p-2 mx-2 w-full flex justify-center">
                     <CartTimeline />
                 </div>
                 <div class="flex justify-center">
@@ -13,33 +13,17 @@
                 
             </main>
             
-            <dialog ref="loginForm" class="modal">
-                <LoginForm @success="loginForm?.close()"/>
-            </dialog>
+            
+            <LoginFormDialog />
             <LogoutUIDialog />
+            <AlertsGroup class="z-50"/>
 
-            <AlertsGroup/>
         </ClientOnly>
     </div>
 </template>
 
 <script setup lang="ts">
-    const userstore = useUserStore()
-    const loginForm = ref<HTMLDialogElement>()
-    
-
-    onMounted(async () => {
-        await nextTick()
    
-        if(!userstore.isAuthenticated){
-            loginForm.value?.showModal()
-        }
-        
-        
-        
-    })
-
- 
 
 </script>
 

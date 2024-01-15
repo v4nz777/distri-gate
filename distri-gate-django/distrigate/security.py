@@ -47,6 +47,9 @@ def require_token(function):
         
         except jwt.ExpiredSignatureError:
             return JsonResponse({"message":"Token expired!"}, status=403)
+        
+        except User.DoesNotExist:
+            return JsonResponse({'message':f'User does not exist!'}, status=404)
 
         else:
             blacklist = UsedToken.objects.filter(access_token=token[1], owner=request.user)

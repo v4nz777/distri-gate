@@ -4,7 +4,7 @@
             <p class="w-max h-max rounded-lg font-black text-white text-4xl">DISTRIGATE</p>
         </div>
         <div class="card-body items-center text-center">
-            <h2 class="card-title text-2xl font-bold">{{ userstore.currentUser.username }}</h2>
+            <h2 class="card-title text-2xl font-bold">{{ userstore.currentUser?.username }}</h2>
             <p class="font-thin">You are about to be logged out...</p>
             <div class="card-actions">
                 <span class="loading loading-bars loading-lg text-primary"></span>
@@ -13,7 +13,7 @@
     </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
     const userstore = useUserStore()
     const emits = defineEmits(['loggingOut','exited'])
 

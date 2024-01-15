@@ -15,7 +15,6 @@
             OR
         </div>
         <a class="link link-hover text-center">CREATE ACCOUNT</a>
-
     </div>
 </template>
 
@@ -34,12 +33,21 @@
 
         if(!loading.value){
             loading.value=true
-            await getAccessToken(username.value,password.value)
-            const { pending, error } = await userstore.setUser(username.value)
 
-            loading.value=pending.value
-            if(userstore.isAuthenticated)emits('success')
+            await getAccessToken(username.value,password.value)
+            await userstore.setUser(username.value)
+
+            loading.value=false
+            userstore.loggedUser = username.value
+            
+            if(userstore.isAuthenticated){
+                emits('success')
+                alertstore.addAlert({message:`Welcome ${username.value}`, type: 'success', shown:true, id:'temp'})
+            }
             else alertstore.addAlert({message:'Wrong credentials', type: 'error', shown:true, id:'temp'})
+
+            username.value = ''
+            password.value = ''
         }
     }
 

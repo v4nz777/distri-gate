@@ -5,14 +5,14 @@
         </div>
 
         <div class="flex justify-center gap-5 border-t p-5 justify-self-end">
-                <button class="btn  btn-ghost" @click="navigateTo('/cart/checkout')">BACK</button>
-                <button class="btn btn-primary" @click="navigateTo('/cart/complete')">PAY</button>
+                <button class="btn  btn-ghost" @click="emits('backwards')">BACK</button>
+                <button class="btn btn-primary" @click="emits('forwards')">PAY</button>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-
+    const emits = defineEmits(['backwards', 'forwards'])
 </script>
 
 <style scoped>

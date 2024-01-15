@@ -1,4 +1,5 @@
 <template>
+    
     <div class="w-full flex justify-center p-20">
 
         <slot />

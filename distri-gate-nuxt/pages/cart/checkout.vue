@@ -3,8 +3,7 @@
         <ClientOnly>
             <div class="flex gap-5 justify-center max-md:flex-col max-md:items-center">
                 <CartSummary />
-                <CartCheckout />
-
+                <CartCheckout @backwards="navigateTo('/cart')" @forwards="proceedToPayment()"/>
             </div>
         </ClientOnly>
         
@@ -12,6 +11,14 @@
 </template>
 
 <script setup lang="ts">
+    const userstore = useUserStore()
+
+    const proceedToPayment = ()=> {
+        if(!userstore.isAuthenticated)userstore.showLoginFormDialog()
+        else navigateTo('/cart/payment')
+    }
+
+
     definePageMeta({
         layout:'cart',
         pageTransition: {

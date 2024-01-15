@@ -87,7 +87,7 @@ def get_private_user(request:HttpRequest,username:str)->User:
         user = User.objects.get(username=username)
 
     except User.DoesNotExist:
-        return JsonResponse({'message': f'{username} not found, may be deleted from the database!'})
+        return JsonResponse({'message': f'{username} not found, may be deleted from the database!'},status=404)
     
     else:
         if request.user != user:
@@ -126,14 +126,17 @@ def add_new_address(request:HttpRequest):
    
     user:User = request.user
     data = json.loads(request.body)
+    print(data)
     _address_in:AddressIn = AddressIn(**data)
     new_address:Address = Address.objects.create(
-        address_line   = _address_in.form_address_line,
-        street         = _address_in.form_street,
-        city           = _address_in.form_city,
-        country        = _address_in.form_country,
-        postal_code    = _address_in.form_postal_code,
-        resident       = user
+        address_line    = _address_in.form_address_line,
+        street          = _address_in.form_street,
+        city            = _address_in.form_city,
+        country         = _address_in.form_country,
+        province        = _address_in.form_province,
+        postal_code     = _address_in.form_postal_code,
+        contact_person  = _address_in.form_contact_person,
+        contact         = _address_in.form_contact
     )
 
     try:

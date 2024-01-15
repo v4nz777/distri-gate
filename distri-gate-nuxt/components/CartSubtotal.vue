@@ -30,8 +30,8 @@
                 <p>{{cartstore.currency.symbol + cartstore.cartTotalAmount.toFixed(2) }}</p>
             </div>
             <div class="flex justify-center gap-5 border-t p-5">
-                <button class="btn btn-sm btn-ghost" @click="navigateTo('/products')">ADD MORE</button>
-                <button class="btn btn-sm btn-primary" @click="navigateTo('/cart/checkout')">PROCEED</button>
+                <button class="btn btn-sm btn-ghost" @click="emits('backwards')">ADD MORE</button>
+                <button class="btn btn-sm btn-primary" @click="emits('forwards')">PROCEED</button>
             </div>
         </div>
     </div>
@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
     const cartstore = useCart()
-  
+    const emits = defineEmits(['backwards', 'forwards'])
 
 </script>
 

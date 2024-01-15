@@ -3,7 +3,7 @@
 
 export type Alert = {
     id: string
-    type: 'temporary'|'error'|'sticky'
+    type: 'temporary'|'error'|'sticky'|'success'
     css_class?: string
     message: string
     shown: boolean
@@ -56,9 +56,13 @@ export type Address = {
     province: string
     country: string
     postal_code: string
+    contact: string
+    contact_person: string
 }
 
 export type AddressSubmit = {
+    form_contact_person:string
+    form_contact:string
     form_address_line?:string
     form_street?:string
     form_city:string
