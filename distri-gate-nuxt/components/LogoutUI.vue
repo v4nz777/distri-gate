@@ -1,4 +1,5 @@
 <template>
+    <ClientOnly>
     <div class="card w-96 bg-base-100 shadow-xl">
         <div class="mx-10 mt-10 px-10 py-5 bg-primary flex justify-center items-center rounded-lg">
             <p class="w-max h-max rounded-lg font-black text-white text-4xl">DISTRIGATE</p>
@@ -11,6 +12,7 @@
             </div>
         </div>
     </div>
+    </ClientOnly>
 </template>
 
 <script lang="ts" setup>

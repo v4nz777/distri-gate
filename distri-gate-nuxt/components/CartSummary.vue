@@ -46,11 +46,11 @@
              
                 <tbody>
                     <tr class="w-full  h-4"></tr>
-                    <tr v-for="item in cartstore.items" :key="item.id" class="">
+                    <tr v-for="item in cartstore.items" :key="item.variantId" class="">
                         <td class="flex gap-4 items-center px-0 mx-0">
                             <div class="object-contain w-9 h-max">
                               
-                                <UseImage :src="item.product.image" :alt="item.product.description">
+                                <UseImage :src="item.productVariant.variant_image??''" :alt="item.productTitle">
                                     <template #loading>
                                     Loading..
                                     </template>
@@ -60,12 +60,12 @@
                                     </template>
                                 </UseImage>
                             </div>
-                            <p class="w-[150px] line-clamp-2 text-sm font-semibold">{{ item.product?.title }}</p>
+                            <p class="w-[150px] line-clamp-2 text-sm font-semibold">{{ item.productTitle }}</p>
                         </td>
 
 
                         <td class="text-center">{{ item.quantity }}</td>
-                        <td class="text-end">{{cartstore.currency.symbol+ item.product?.price.amount.toFixed(2) }}</td>
+                        <td class="text-end">{{cartstore.currency.symbol+ item.productVariant.price_amount.toFixed(2) }}</td>
                     </tr>
                 </tbody>
             </table>

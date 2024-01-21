@@ -8,15 +8,20 @@ export const useProducts = defineStore('products-store', ()=> {
     const fetching = ref<boolean>(true)
 
     const getAllProducts = async () => {
-        const { data, pending, error, refresh } = await useFetch('/api/products',{})
+        const { data, pending, error, refresh } = await useFetch<Product[]>('/api/products',{})
         fetching.value = pending.value
         if(data.value)products.value = data.value as Product[]
     }
 
-    return {
-        products,
-        fetching,
+    const useProductFromStore = (productId:number):Product=>{
+        return products.value[useIndexFromItemId(productId,products.value)]
+    }
 
-        getAllProducts
+    return {
+        products:skipHydrate(products),
+        fetching:skipHydrate(fetching),
+
+        getAllProducts,
+        useProductFromStore
     }
 })

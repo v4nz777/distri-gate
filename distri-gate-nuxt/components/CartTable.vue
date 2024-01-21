@@ -29,7 +29,7 @@
             <TransitionGroup tag="tbody" name="list">
             
             <!-- row 1 -->
-            <tr v-for="item in cartstore.items" :key="item.id">
+            <tr v-for="item in cartstore.items" :key="item.variantId">
                 <CartTableItem :item="item"/>
             </tr>
         
@@ -66,7 +66,7 @@
 
     const removeSelectedItems = () => {
         const selectedItems = cartstore.items.filter(item=>item.selected)
-        selectedItems.forEach(selectedItem => cartstore.removeItem(selectedItem.id))
+        selectedItems.forEach(selectedItem => cartstore.removeItem(selectedItem.variantId))
 
         allItemsSelected.value = false
     }

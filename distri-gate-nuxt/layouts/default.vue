@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full px-5">
+    <div class="w-full px-5 h-screen">
         <ClientOnly>
             <TopNav/>
         </ClientOnly>

@@ -13,9 +13,12 @@ export type Alert = {
 
 
 export type Item = {
-    id: number;
+    variantId: number;
     quantity: number;
-    product: Product;
+    productId: number;
+    productTitle: string;
+    productVariant: ProductVariation;
+    selectedVariantIndex?: number;
     selected:boolean;
 }
 
@@ -23,13 +26,26 @@ export type Product = {
     id:number;
     title:string;
     description:string;
-    price:Price
     image:string;
     category:string;
-    rating:{
-        rate: number,
-        count:number
-    }
+    variations: ProductVariation[];
+    default_variant: number;
+}
+
+
+
+export type ProductVariation = {
+    id: number
+    name: string
+    type: string
+    variant_image?: string
+    variant_color?: string
+    variant_thumbnail?:string
+    price_amount: number
+    price_currency_code: string
+    price_currency_symbol: string
+    variant_description: string
+    supply_quantity: number
 }
 
 export type GiftCode = {
@@ -37,11 +53,6 @@ export type GiftCode = {
     discount?: number
 }
 
-export type Price = {
-    currency: string
-    currency_symbol: string
-    amount: number
-}
 
 export type AccessToken = {
     access_token: string
@@ -60,17 +71,6 @@ export type Address = {
     contact_person: string
 }
 
-export type AddressSubmit = {
-    form_contact_person:string
-    form_contact:string
-    form_address_line?:string
-    form_street?:string
-    form_city:string
-    form_postal_code:string
-    form_province:string
-    form_country:string
-}
-
 export interface User {
     id: number
     username: string
@@ -87,4 +87,35 @@ export interface PrivateUser extends User {
     email?: string
     contact_number?: string
     
+}
+
+
+
+export type AddressSubmit = {
+    form_contact_person:string
+    form_contact:string
+    form_address_line?:string
+    form_street?:string
+    form_city:string
+    form_postal_code:string
+    form_province:string
+    form_country:string
+}
+
+export type ProductSubmit = {
+    title: string
+    description?: string
+    image: Uint8Array
+    category?: string
+    variations: ProductVariationSubmit[]
+}
+
+export type ProductVariationSubmit = {
+    name: string
+    type: 'NAME_MODE' | 'THUMBNAIL_MODE'| 'COLOR_MODE'
+    variant_image?: Uint8Array
+    price_amount: number
+    price_currency_code: string
+    price_currency_symbol: string
+    variation_description: string
 }

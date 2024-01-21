@@ -14,8 +14,8 @@
         </div>
         
         <ul v-else class="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-5 justify-items-center">
-            <li v-for="product in productstore.products" :key="product?.id" class="w-max">
-                <ProductCard :product="product"/>
+            <li v-for="product in productstore.products" :key="product.id" class="w-max">
+                <ProductCard :product="product" @clicked="navigateTo(`/products/${product.id}`)"/>
             </li>
         </ul>
      
