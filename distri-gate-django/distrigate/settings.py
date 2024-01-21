@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -32,7 +32,14 @@ INSTALLED_APPS = [
     'django_extensions',
     'products',
     'users',
-    'corsheaders'
+    'corsheaders',
+    'storages',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -44,6 +51,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'distrigate.urls'
@@ -73,15 +82,37 @@ WSGI_APPLICATION = 'distrigate.wsgi.application'
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.postgresql',
-    'NAME': os.getenv('POSTGRES_NAME'),
-    'USER': os.getenv('POSTGRES_USER'),
-    'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-    'HOST': os.getenv('POSTGRES_HOST'),
+    'NAME': os.environ.get('POSTGRES_NAME'),
+    'USER': os.environ.get('POSTGRES_USER'),
+    'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+    'HOST': os.environ.get('POSTGRES_HOST'),
     'PORT': '5432',
     'OPTIONS': {'sslmode': 'require'},
   }
 }
 
+
+AUTHENTICATION_BACKENDS = [
+    
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        'APP': {
+            'client_id': '56314544680-2m72u6nquimnkn8nj9oped9sfaoinomv.apps.googleusercontent.com',
+            'secret': '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',
+            'key': 'AIzaSyAx7Zlfmp1M1huMt1nfOAWsg6Wp9Gs5a08'
+        }
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -144,3 +175,15 @@ CORS_ALLOW_METHODS = (
 
 # JWT OPTION
 JWT_TOKEN_EXPIRATION_DAYS = 1
+
+
+
+# STORAGES
+DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Storage"
+
+STATICFILES_STORAGE = "storages.backends.s3.S3Storage"
+AWS_STORAGE_BUCKET_NAME = os.environ.get('STORAGE_BUCKET_NAME')                      #Blackblaze bucket
+AWS_S3_REGION_NAME = os.environ.get('STORAGE_REGION')                                #Blackblaze region
+AWS_S3_ENDPOINT_URL = f'https://s3.{AWS_S3_REGION_NAME}.backblazeb2.com'        #Blackblaze endpoint url
+AWS_S3_ACCESS_KEY_ID = os.environ.get('STORAGE_ACCESS_KEY')                          #Access key         
+AWS_SECRET_ACCESS_KEY = os.environ.get('STORAGE_SECRET_KEY')                         #Secret key
