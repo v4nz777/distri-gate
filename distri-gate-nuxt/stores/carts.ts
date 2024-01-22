@@ -5,9 +5,10 @@ import { useAlertStore } from "./alerts"
 export const useCart = defineStore('cart-store', ()=> {
 
         const alertstore = useAlertStore()
+        const userstore = useUserStore()
 
         // STATES
-        
+        const cartOwner = useLocalStorage<string|null>('cartOwner', null)
         const items = useLocalStorage('cartItems',[] as Item[])
         const cartGiftCode = useLocalStorage('cartGiftCode', '')
         const discount = useLocalStorage('discount',0)
@@ -63,9 +64,11 @@ export const useCart = defineStore('cart-store', ()=> {
          * Otherwise, returns `new`  (this will add new item)
         */
         const addItem = (newItem:Item)=> {
-            return new Promise<string>((resolve,reject)=> {    
+            return new Promise<string>((resolve,reject)=> {   
+
                 const foundIndex = items.value.findIndex((i)=>i.variantId === newItem.variantId)
                 
+                setLoggedUserAsCartOwner() //
 
                 if(foundIndex > -1){ // Avoid duplication
                     items.value[foundIndex].quantity += newItem.quantity
@@ -138,12 +141,18 @@ export const useCart = defineStore('cart-store', ()=> {
         }
 
 
+        const setLoggedUserAsCartOwner = ()=>{
+            cartOwner.value = userstore.loggedUser
+        }
+
+
         const reset =  ()=> {
             items.value = [] as Item[]
             cartGiftCode.value = ''
             discount.value = 0
             tax.value = 2.0
             cartIsNavigated.value = false
+            cartOwner.value = null
         }
 
 
@@ -154,6 +163,10 @@ export const useCart = defineStore('cart-store', ()=> {
             if(value.length < 1)navigateTo('/products')
         },{deep:true})
 
+
+        watch(()=>userstore.loggedUser, (newValue)=>{
+            if(newValue && cartOwner.value && newValue!==cartOwner.value) reset()
+        })
 
  
  
@@ -183,6 +196,7 @@ export const useCart = defineStore('cart-store', ()=> {
         validateGiftCode,
         removeItem,
         getItemCountFromCart,
+        setLoggedUserAsCartOwner,
         reset
 
     }

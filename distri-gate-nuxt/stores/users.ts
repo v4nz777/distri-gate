@@ -3,6 +3,10 @@ import type { PrivateUser, AddressSubmit } from "~/types"
 
 export const useUserStore = defineStore('userStore', ()=> {
 
+
+    const cartstore = useCart()
+
+
     const loggedUser = useLocalStorage<string>('loggedUser', null)
 
     const currentUser = ref<PrivateUser|null>(null)
@@ -42,6 +46,7 @@ export const useUserStore = defineStore('userStore', ()=> {
         })
        
         currentUser.value = null
+        cartstore.reset()
         exiting.value = pending.value
         loggedUser.value = null
     }
