@@ -107,9 +107,9 @@ SOCIALACCOUNT_PROVIDERS = {
         # (``socialaccount`` app) containing the required client
         # credentials, or list them here:
         'APP': {
-            'client_id': '56314544680-2m72u6nquimnkn8nj9oped9sfaoinomv.apps.googleusercontent.com',
-            'secret': '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',
-            'key': 'AIzaSyAx7Zlfmp1M1huMt1nfOAWsg6Wp9Gs5a08'
+            'client_id': os.environ.get('GOOGLE_CLIENT_ID'),
+            'secret': os.environ.get('GOOGLE_SECRET'),
+            'key': os.environ.get('GOOGLE_KEY')
         }
     }
 }
