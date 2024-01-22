@@ -20,7 +20,8 @@
             <p class="line-clamp-1 text-sm text-neutral font-light w-full">{{ product.description||'No description' }}</p>
             <div class="card-actions justify-end items-center">
                 <p class="font-semibold text-2xl text-primary">{{ cartstore.currency.symbol }}{{ product.variations[useIndexFromItemId(product.default_variant,product.variations)].price_amount.toFixed(2) }}</p>
-                <AddToCartBtn @click="initializeItemToCart"/>
+                <button class="btn btn-primary font-bold" @click="emits('clicked')">BUY</button>
+                <!-- <AddToCartBtn @click="initializeItemToCart"/> -->
             </div>
         </div>
     </div>
@@ -38,25 +39,9 @@
         product: Product
     }>()
 
-    // const {} = useImage(props.product.image)
-
     
    
     const itemForCart = useItemForCart()
-
-    const initializeItemToCart = ()=> {
-        if(!props.product) return
-        const defaultProductVariantIndex = useIndexFromItemId(props.product.default_variant, props.product.variations)
-
-        itemForCart.value = {
-            variantId: props.product.id,
-            productTitle: props.product.title,
-            productId: props.product.id,
-            quantity: 1,
-            productVariant: props.product.variations[defaultProductVariantIndex],
-            selected: false
-        }
-    }
 </script>
 
 <style scoped>
