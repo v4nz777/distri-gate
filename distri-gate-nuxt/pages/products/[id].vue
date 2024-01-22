@@ -93,8 +93,10 @@
             </div>
 
     
-            <div class="w-full">
-                <button class="btn btn-primary font-bold" :disabled="isVariantSoldOut" @click="initializeItemToCart">ADD TO CART</button>
+            <div class="w-full flex gap-5">
+                <button class="btn btn-primary font-bold" :disabled="isVariantSoldOut || productIsMaxedInCart" @click="initializeItemToCart">ADD TO CART</button>
+                <button  v-if="quantityInCart" class="btn btn-primary btn-outline border-2 animate-bounce" @click="navigateTo('/cart')">In Cart: {{quantityInCart}}</button>
+                
             </div>
 
             <div class="w-full">
@@ -119,7 +121,7 @@
     
     const route = useRoute()
     const id = route.params.id
-
+    const cartstore = useCart()
    
 
     const { data:product, pending, error, refresh } = await useFetch<Product>(`/api/products/${id}`,{
@@ -140,7 +142,16 @@
 
     const itemForCart = useItemForCart()
 
+    const quantityInCart = computed(()=>{
+        if(selectedVariant.value===undefined)return 0
+        return cartstore.getItemCountFromCart(selectedVariant.value)
+    })
+
+    const productIsMaxedInCart = computed(()=> selectedVariantSupplyLeft.value <= quantityInCart.value)
+
     const initializeItemToCart = ()=> {
+
+
         if(!product.value) return
         itemForCart.value = {
             variantId: product.value.variations[selectedVariantIndex.value].id,
