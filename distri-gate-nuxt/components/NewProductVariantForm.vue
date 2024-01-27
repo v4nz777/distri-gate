@@ -1,6 +1,6 @@
 <template>
     <input type="radio" :name="radioGroup" role="tab" class="tab text-primary text-xs" 
-        :aria-label="truncateName(tabLabel,7)" 
+        :aria-label="truncateName(tabLabel,10)" 
         :checked="selected"
         v-model="model"
         :value="variantData.id"
