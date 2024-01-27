@@ -1,6 +1,8 @@
 
 import { skipHydrate } from "pinia"
 import type { Product } from "~/types"
+import { getIndexFromIdAndArray } from "~/utils"
+
 
 export const useProducts = defineStore('products-store', ()=> {
 
@@ -14,7 +16,7 @@ export const useProducts = defineStore('products-store', ()=> {
     }
 
     const useProductFromStore = (productId:number):Product=>{
-        return products.value[useIndexFromItemId(productId,products.value)]
+        return products.value[getIndexFromIdAndArray(productId,products.value)]
     }
 
     return {

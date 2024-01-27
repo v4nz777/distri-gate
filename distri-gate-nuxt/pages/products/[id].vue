@@ -36,9 +36,9 @@
             <div>
                 <h2 class="font-normal text-4xl text-primary ">{{ product?.title }}</h2>
                 <div class="flex gap-2 py-2">
-                    <div class="badge badge-sm bg-orange-500 text-white">NEW!</div>
-                    <div class="badge badge-sm badge-success text-white">DISCOUNTED!</div>
-                    <div class="badge badge-sm badge-primary">ORIGINAL</div>
+                    <div v-if="product?.new" class="badge badge-sm bg-orange-500 text-white">NEW!</div>
+                    <div v-if="product?.discounted" class="badge badge-sm badge-success text-white">DISCOUNTED!</div>
+                    <div v-if="product?.original" class="badge badge-sm badge-primary">ORIGINAL</div>
                 </div>
             </div>
             
@@ -70,7 +70,8 @@
             </div>
             <p v-if="product" class="text-neutral text-md font-light">{{ product.variations[selectedVariantIndex].variant_description||product.description }}</p>
             <div>
-                <div class="flex gap-1 py-4">
+                <!-- TODO -->
+                <div class="flex gap-1 py-4" v-if="product?.discounted">
                     <p class="line-through text-neutral">{{ product?.variations[selectedVariantIndex].price_currency_symbol }}{{ product?.variations[selectedVariantIndex].price_amount.toFixed(2) }}</p>
                     <span class="badge badge-outline badge-success text-xs border-dashed">100% OFF!</span>
                 </div>
@@ -117,6 +118,7 @@
 <script setup lang="ts">
     import { UseImage } from '@vueuse/components';
     import type { Product, ProductVariation } from '~/types';
+    import { getIndexFromIdAndArray } from '~/utils'
 
     
     const route = useRoute()
@@ -130,7 +132,7 @@
 
     const selectedVariantIndex = computed(()=>{
         if(selectedVariant.value && product.value){
-            return useIndexFromItemId(selectedVariant.value,product.value.variations)
+            return getIndexFromIdAndArray(selectedVariant.value,product.value.variations)
         }else return 0
     })
 

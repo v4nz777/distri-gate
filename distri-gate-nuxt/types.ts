@@ -30,6 +30,9 @@ export type Product = {
     category:string;
     variations: ProductVariation[];
     default_variant: number;
+    discounted:boolean;
+    new:boolean;
+    original:boolean;
 }
 
 
@@ -105,17 +108,27 @@ export type AddressSubmit = {
 export type ProductSubmit = {
     title: string
     description?: string
-    image: Uint8Array
     category?: string
     variations: ProductVariationSubmit[]
 }
 
 export type ProductVariationSubmit = {
+    id:string
+    name?: string
+    displayMode: 'NAME_MODE' | 'THUMBNAIL_MODE'| 'COLOR_MODE'
+    variantImage?: File | null
+    variantColor?:string
+    priceAmount?: number
+    priceCurrencyCode?: string
+    priceCurrencySymbol?: string
+    variationDescription?: string
+    availableSupply?:number,
+    default:boolean
+
+}
+
+export type ProductImageDataSubmit = {
     name: string
-    type: 'NAME_MODE' | 'THUMBNAIL_MODE'| 'COLOR_MODE'
-    variant_image?: Uint8Array
-    price_amount: number
-    price_currency_code: string
-    price_currency_symbol: string
-    variation_description: string
+    type: string
+    data: string
 }
