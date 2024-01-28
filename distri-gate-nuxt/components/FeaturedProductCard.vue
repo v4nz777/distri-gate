@@ -31,8 +31,7 @@
 
     onMounted(async () => {
       const { data, pending, error, refresh } = await useFetch(`/api/products/${productId}`)
-      product.value = data.value
-      console.log(data.value)
+    //   product.value = data.value
     })
 
 </script>
