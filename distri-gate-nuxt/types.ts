@@ -107,7 +107,6 @@ export type AddressSubmit = {
 
 export type ProductSubmit = {
     title: string
-    description?: string
     category?: string
     variations: ProductVariationSubmit[]
 }
@@ -118,11 +117,11 @@ export type ProductVariationSubmit = {
     displayMode: 'NAME_MODE' | 'THUMBNAIL_MODE'| 'COLOR_MODE'
     variantImage?: File | null
     variantColor?:string
-    priceAmount?: number
+    priceAmount?:  string
     priceCurrencyCode?: string
     priceCurrencySymbol?: string
     variationDescription?: string
-    availableSupply?:number,
+    availableSupply?:string,
     default:boolean
 
 }
