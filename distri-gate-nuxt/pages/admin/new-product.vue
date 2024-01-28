@@ -19,7 +19,7 @@
             <label class="form-control w-full">
                 <div class="label flex">
                     <span class="label-text-alt text-gray-500 font-bold">Product Title</span>
-                    <button class="btn btn-primary btn-xs">Save Product</button>
+                    <button class="btn btn-primary btn-xs" @click="saveProduct">Save Product</button>
                 </div>
                 <input type="text" placeholder="Premium Product X" class="input input-sm input-bordered input-base-300 w-full shadow" />
             </label>
@@ -54,11 +54,13 @@
     import { UseImage } from '@vueuse/components';
     import { v4 as uuidv4 } from 'uuid';
     import { getIndexFromIdAndArray } from '~/utils'
+import { formatDate } from '@vueuse/core';
 
 
     definePageMeta({
         layout: 'admin'
     })
+
 
     // Variant Forms
     const { 
@@ -69,32 +71,11 @@
         setSelectedVariantForm
     } = useVariantFormControl('')
     
-    
-
-   
-
 
     // Product Forms
-    const productForm  = reactive<ProductSubmit>({
-        title: '',
-        description:'',
-        category: '',
-        variations: [{
-            id:uuidv4(),
-            name: undefined,
-            variationDescription: undefined,
-            variantImage:undefined,
-            priceAmount:undefined,
-            priceCurrencyCode:undefined,
-            priceCurrencySymbol:undefined,
-            availableSupply:undefined,
-            displayMode:'NAME_MODE',
-            variantColor:undefined,
-            default:false
-        }]
-    })
+    const { productForm, saving,  saveProduct } = useProductFormControl()
 
-
+    
     //Photo
     const { temporaryPhoto, setTemporaryPhoto } = useTemporaryPhoto()
 
@@ -166,6 +147,91 @@
             setSelectedVariantForm
         }
 
+    }
+
+    function useProductFormControl() {
+        const productForm  = reactive<ProductSubmit>({
+            title: '',
+            category: '',
+            variations: [{
+                id:uuidv4(),
+                name: undefined,
+                variationDescription: undefined,
+                variantImage:undefined,
+                priceAmount:undefined,
+                priceCurrencyCode:undefined,
+                priceCurrencySymbol:undefined,
+                availableSupply:undefined,
+                displayMode:'NAME_MODE',
+                variantColor:undefined,
+                default:false
+            }]
+        })
+
+        const saving = ref(false)
+        const saveProduct =  async () => {
+            saving.value = true
+            const productData = structuredClone(toRaw(productForm))
+
+            const fd = toFormData(productData)
+            const { data, pending, error, refresh } = await useFetch('/api/products/new-product',{
+                headers: { 'Content-Type': 'multipart/form-data' },
+                method: 'post',
+                body: {
+                    productData: fd
+                }
+            })
+            saving.value = pending.value
+            console.log(data.value)
+        }
+
+        return {
+            productForm,
+            saveProduct,
+            saving
+            
+        }
+
+    }
+
+    // Utils
+    function toFormData(productData:ProductSubmit ){
+
+        const _fd = new FormData()
+
+        _fd.append('title', productData.title)
+        _fd.append('category', productData.category??'')
+
+        productData.variations.forEach((variant:ProductVariationSubmit,index)=>{
+        
+            for(const key in variant){
+                if (Object.prototype.hasOwnProperty.call(variant, key)){
+                    if(key==='variantImage'){
+                        _fd.append(`variations[${index}][${key}]`, variant[key]??new Blob(),variant[key]?.name )
+                    }
+                    else _fd.append(`variations[${index}][${key}]`,String(variant[key as keyof ProductVariationSubmit]))
+                }
+            }
+            
+        })
+    
+
+        // for (const key in productData){
+        //     const value = productData[key]
+
+        //     //Arrays
+        //     if (Array.isArray(value)){
+        //         value.forEach((element,index)=> {
+        //             for (const prop in element) {
+        //                 if(prop === 'variantImage'){
+        //                     _fd.append(`${key}[${index}][${prop}]`, element[prop]);
+        //                 }else _fd.append(`${key}[${index}][${prop}]`, element[prop]);
+        //             }
+        //         })
+        //     } else _fd.append(key,String(value))
+
+        // }
+        return _fd
     }
 </script>
 
