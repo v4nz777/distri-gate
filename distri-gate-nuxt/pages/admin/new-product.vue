@@ -1,8 +1,19 @@
 <template>
     
     <div class="w-full h-max flex max-md:flex-col max-md:items-start mt-5 justify-start gap-10">
-        
-
+        <div class="w-full min-w-[28rem] max-w-md grid grid-cols-1 gap-3 content-start">
+          
+          <figure class="p-5 hover:scale-125  ease-in-out duration-1000">
+              <UseImage :src="temporaryPhoto" class="w-full h-full object-contain drop-shadow-lg">
+                  <template #loading>
+                      <LogoAnimationLoading class="w-full h-full object-contain"/>
+                  </template>
+                  <template #error>
+                      <img src="/product.webp" class="w-full h-full object-contain"/>
+                  </template>
+              </UseImage>
+          </figure>
+      </div>
         <div class="w-full max-w-md  grid grid-cols-1 content-start gap-5">
 
             <label class="form-control w-full">
@@ -34,19 +45,7 @@
             </ClientOnly>
          
         </div>
-        <div class="w-full min-w-[28rem] max-w-md grid grid-cols-1 gap-3 content-start">
-          
-            <figure class="p-5 hover:scale-125  ease-in-out duration-1000">
-                <UseImage :src="temporaryPhoto" class="w-full h-full object-contain drop-shadow-lg">
-                    <template #loading>
-                        <LogoAnimationLoading class="w-full h-full object-contain"/>
-                    </template>
-                    <template #error>
-                        <img src="/product.webp" class="w-full h-full object-contain"/>
-                    </template>
-                </UseImage>
-            </figure>
-        </div>
+        
     </div>
 </template>
 
@@ -126,9 +125,9 @@
         const selectedVariantForm = toRef(initial)
 
         const removeVariantForm = (variantId:string)=>{
-        const index = getIndexFromIdAndArray(variantId,productForm.variations)
-        productForm.variations.splice(index,1)
-        selectedVariantForm.value = productForm.variations[index-1].id
+            const index = getIndexFromIdAndArray(variantId,productForm.variations)
+            productForm.variations.splice(index,1)
+            selectedVariantForm.value = productForm.variations[0].id
         }
 
         const addVariantForm = (variantData:ProductVariationSubmit|null|undefined)=>{
@@ -160,7 +159,11 @@
         
 
         return {
-            selectedVariantForm, addVariantForm,removeVariantForm, executeVariantForm, setSelectedVariantForm
+            selectedVariantForm, 
+            addVariantForm,
+            removeVariantForm, 
+            executeVariantForm, 
+            setSelectedVariantForm
         }
 
     }
