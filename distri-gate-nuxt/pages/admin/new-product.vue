@@ -169,20 +169,18 @@ import { formatDate } from '@vueuse/core';
         })
 
         const saving = ref(false)
+        
         const saveProduct =  async () => {
             saving.value = true
             const productData = structuredClone(toRaw(productForm))
 
             const fd = toFormData(productData)
-            const { data, pending, error, refresh } = await useFetch('/api/products/new-product',{
-                headers: { 'Content-Type': 'multipart/form-data' },
+            const response = await $fetch('/api/products/new-product',{
                 method: 'post',
-                body: {
-                    productData: fd
-                }
+                body: fd
+                
             })
-            saving.value = pending.value
-            console.log(data.value)
+            saving.value = false
         }
 
         return {
