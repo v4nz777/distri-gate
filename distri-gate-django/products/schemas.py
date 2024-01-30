@@ -39,8 +39,6 @@ class ProductSchema(ModelSchema):
 class ProductInput(BaseModel):
 
     title:                  str
-    description:            str
-    image:                  bytes | None
     category:               str   | None = ''
     variations:             list['VariantInput'] = []
 
@@ -56,6 +54,8 @@ class VariantInput(BaseModel):
     price_currency_code:    str
     price_currency_symbol:  str
     variation_description:  str   | None
+    supply_quantity:        int
+    is_default:             bool
 
 
 
