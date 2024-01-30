@@ -1,6 +1,6 @@
 from django.http import HttpRequest
 from products.schemas import ProductInput, VariantInput
-
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 def transform_product_input_data(request:HttpRequest)->ProductInput:
     
@@ -23,23 +23,27 @@ def transform_product_input_data(request:HttpRequest)->ProductInput:
     
     # Handle file upload
     for variant_index in variations:
-        image = request.FILES.get(f'variations[{variant_index}][variantImage]')
-        variations[variant_index]['variantImage']=image
+        image:InMemoryUploadedFile = request.FILES.get(f'variations[{variant_index}][variantImage]')
+        variations[variant_index]['variantImage']=image.read()
+        variations[variant_index]['variantImageName']=image.name
+
+        
     
-    # Covert to variations to list of VariantInput
+    # Convert from variations to list of VariantInput
     variant_input_list = []
     for variant in variations:
         converted = VariantInput(
-            name = variations[variant]['name'],
-            type = variations[variant]['displayMode'],
+            name = variations[variant]['name'][0],
+            type = variations[variant]['displayMode'][0],
             variant_image = variations[variant]['variantImage'],
-            variant_color = variations[variant]['variantColor'],
-            price_amount = variations[variant]['priceAmount'],
-            price_currency_code = variations[variant]['priceCurrencyCode'],
-            price_currency_symbol = variations[variant]['priceCurrencySymbol'],
-            supply_quantity = variations[variant]['availableSupply'],
-            variation_description = variations[variant]['variationDescription'],
-            is_default = variations[variant]['default'],
+            variant_image_name = variations[variant]['variantImageName'],
+            variant_color = variations[variant]['variantColor'][0],
+            price_amount = float(variations[variant]['priceAmount'][0]),
+            price_currency_code = variations[variant]['priceCurrencyCode'][0],
+            price_currency_symbol = variations[variant]['priceCurrencySymbol'][0],
+            supply_quantity = int(variations[variant]['availableSupply'][0]),
+            variation_description = variations[variant]['variationDescription'][0],
+            is_default = variations[variant]['default'][0]=='true',
         )
         variant_input_list.append(converted)
 
