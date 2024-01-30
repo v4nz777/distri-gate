@@ -70,8 +70,8 @@ class ProductVariant(models.Model):
     variant_thumbnail = models.ImageField(storage=ThumbnailStorage(), null=True, blank=True)
     
     price_amount = models.IntegerField(default=0)
-    price_currency_code = models.CharField(max_length=3)
-    price_currency_symbol = models.CharField(max_length=2)
+    price_currency_code = models.CharField(max_length=10)
+    price_currency_symbol = models.CharField(max_length=10)
 
     supply_quantity = models.IntegerField(default=1)
 
@@ -121,8 +121,8 @@ class ProductVariant(models.Model):
         thumbnail_io.seek(0)
         
         # Set the model's thumbnail field
-        filename = f'{self.variant_image.name}_{new_width}x{new_height}'
-        self.variant_thumbnail.save(filename, ContentFile(thumbnail_io.read()), save=False)
+        filename = f'{new_width}x{new_height}_{self.variant_image.name.replace('/','_')}'
+        self.variant_thumbnail.save(filename, ContentFile(thumbnail_io.read(),filename), save=False)
 
 
 
