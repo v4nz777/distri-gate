@@ -1,5 +1,5 @@
 from django.http import HttpRequest
-from products.schemas import ProductInput
+from products.schemas import ProductInput, VariantInput
 
 
 def transform_product_input_data(request:HttpRequest)->ProductInput:
@@ -26,9 +26,29 @@ def transform_product_input_data(request:HttpRequest)->ProductInput:
         image = request.FILES.get(f'variations[{variant_index}][variantImage]')
         variations[variant_index]['variantImage']=image
     
+    # Covert to variations to list of VariantInput
+    variant_input_list = []
+    for variant in variations:
+        converted = VariantInput(
+            name = variations[variant]['name'],
+            type = variations[variant]['displayMode'],
+            variant_image = variations[variant]['variantImage'],
+            variant_color = variations[variant]['variantColor'],
+            price_amount = variations[variant]['priceAmount'],
+            price_currency_code = variations[variant]['priceCurrencyCode'],
+            price_currency_symbol = variations[variant]['priceCurrencySymbol'],
+            supply_quantity = variations[variant]['availableSupply'],
+            variation_description = variations[variant]['variationDescription'],
+            is_default = variations[variant]['default'],
+        )
+        variant_input_list.append(converted)
+
+
+
+   
     return ProductInput(
         title=title,
         category=category,
-        variations=variations
+        variations=variant_input_list
     )
     
