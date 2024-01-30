@@ -50,7 +50,7 @@ class VariantInput(BaseModel):
     type:                   str   | None  = 'NAME_MODE'
     variant_image:          bytes | None  = None
     variant_color:          str   | None  = None
-    price_amount:           int
+    price_amount:           float
     price_currency_code:    str
     price_currency_symbol:  str
     variation_description:  str   | None
