@@ -15,13 +15,14 @@
           </figure>
       </div>
         <div class="w-full max-w-md  grid grid-cols-1 content-start gap-5">
-
+        {{ productForm }}
             <label class="form-control w-full">
                 <div class="label flex">
                     <span class="label-text-alt text-gray-500 font-bold">Product Title</span>
                     <button class="btn btn-primary btn-xs" @click="saveProduct">Save Product</button>
                 </div>
-                <input type="text" placeholder="Premium Product X" class="input input-sm input-bordered input-base-300 w-full shadow" />
+                <input type="text" placeholder="Premium Product X" class="input input-sm input-bordered input-base-300 w-full shadow" 
+                    v-model="productForm.title" />
             </label>
             <ClientOnly>
             <div role="tablist" class="tabs tabs-lifted pb-10">

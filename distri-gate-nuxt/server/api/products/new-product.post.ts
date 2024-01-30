@@ -3,7 +3,7 @@ export default defineEventHandler(async (event)=> {
 
     const api = serverAPI(event)
 
-    await api.post('/api/products/add_new_product/',{
+    await api.post('/api/products/add_new_product',{
         body: dataFromClient
     })
 
