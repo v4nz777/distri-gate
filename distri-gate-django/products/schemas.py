@@ -1,9 +1,6 @@
 from ninja import ModelSchema
 from products.models import Product, ProductVariant
 from pydantic import BaseModel
-from users.models import User
-
-
 
 
 class ProductVariantSchema(ModelSchema):
@@ -49,6 +46,7 @@ class VariantInput(BaseModel):
     name:                   str
     type:                   str   | None  = 'NAME_MODE'
     variant_image:          bytes | None  = None
+    variant_image_name:     str   | None  = None
     variant_color:          str   | None  = None
     price_amount:           float
     price_currency_code:    str
