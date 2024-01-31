@@ -62,10 +62,11 @@ def add_new_product(request:HttpRequest):
         )
    
         # Add the image to the variant
-        new_variant.variant_image.save(
-            variant.variant_image_name,
-            ContentFile(variant.variant_image,variant.variant_image_name),
-            save=True)
+        if variant.variant_image != b'':
+            new_variant.variant_image.save(
+                variant.variant_image_name,
+                ContentFile(variant.variant_image,variant.variant_image_name),
+                save=True)
 
         # Add variant to product
         new_product.variations.add(new_variant)
