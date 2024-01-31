@@ -1,6 +1,46 @@
 from django.http import HttpRequest
 from products.schemas import ProductInput, VariantInput
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from users.models import User
+from products.models import Product, ProductVariant
+from django.core.files.base import ContentFile
+
+
+
+def save_new_product(product_input:ProductInput, seller:User)-> Product:
+    new_product = Product.objects.create(
+        title = product_input.title,
+        category = product_input.category,
+        seller = seller
+    )
+
+    for variant in product_input.variations:
+        # Initiating new variant
+        new_variant = ProductVariant.objects.create(
+            group = new_product,
+            type  = variant.type,
+            name  = variant.name,
+            variant_description = variant.variation_description,
+            price_amount  = variant.price_amount,
+            price_currency_code    = variant.price_currency_code,
+            price_currency_symbol  = variant.price_currency_symbol
+        )
+   
+        # Add the image to the variant
+        if variant.variant_image != b'':
+            new_variant.variant_image.save(
+                variant.variant_image_name,
+                ContentFile(variant.variant_image,variant.variant_image_name),
+                save=True)
+
+        # Add variant to product
+        new_product.variations.add(new_variant)
+    
+    new_product.save()
+    return new_product
+
+
+
 
 def transform_product_input_data(request:HttpRequest)->ProductInput:
     
