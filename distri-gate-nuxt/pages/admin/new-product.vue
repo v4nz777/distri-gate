@@ -13,15 +13,15 @@
                   </template>
               </UseImage>
           </figure>
-      </div>
+        </div>
         <div class="w-full max-w-md  grid grid-cols-1 content-start gap-5">
-        {{ productForm }}
             <label class="form-control w-full">
                 <div class="label flex">
                     <span class="label-text-alt text-gray-500 font-bold">Product Title</span>
-                    <button class="btn btn-primary btn-xs" @click="saveProduct">Save Product</button>
+                    <span class="loading loading-bars loading-xs" v-if="saving"></span>
+                    <button class="btn btn-primary btn-xs" v-else @click="saveProduct" :disabled="!isReady">Save Product</button>
                 </div>
-                <input type="text" placeholder="Premium Product X" class="input input-sm input-bordered input-base-300 w-full shadow" 
+                <input :disabled="saving" type="text" placeholder="Premium Product X" class="input input-sm input-bordered input-base-300 w-full shadow" 
                     v-model="productForm.title" />
             </label>
             <ClientOnly>
@@ -55,7 +55,6 @@
     import { UseImage } from '@vueuse/components';
     import { v4 as uuidv4 } from 'uuid';
     import { getIndexFromIdAndArray } from '~/utils'
-import { formatDate } from '@vueuse/core';
 
 
     definePageMeta({
@@ -65,7 +64,7 @@ import { formatDate } from '@vueuse/core';
 
     // Variant Forms
     const { 
-        selectedVariantForm, 
+        selectedVariantForm,
         addVariantForm, 
         removeVariantForm, 
         executeVariantForm,
@@ -74,11 +73,19 @@ import { formatDate } from '@vueuse/core';
     
 
     // Product Forms
-    const { productForm, saving,  saveProduct } = useProductFormControl()
+    const { 
+        productForm, 
+        saving,  
+        saveProduct,
+        isReady
+    } = useProductFormControl()
 
     
     //Photo
-    const { temporaryPhoto, setTemporaryPhoto } = useTemporaryPhoto()
+    const { 
+        temporaryPhoto, 
+        setTemporaryPhoto 
+    } = useTemporaryPhoto()
 
 
     // Hooks
@@ -157,16 +164,64 @@ import { formatDate } from '@vueuse/core';
             variations: [{
                 id:uuidv4(),
                 name: undefined,
-                variationDescription: undefined,
+                variationDescription: '',
                 variantImage:undefined,
                 priceAmount:undefined,
-                priceCurrencyCode:undefined,
-                priceCurrencySymbol:undefined,
+                priceCurrencyCode:'PHP',
+                priceCurrencySymbol:'₱',
                 availableSupply:undefined,
                 displayMode:'NAME_MODE',
                 variantColor:undefined,
-                default:false
+                default:true
             }]
+        })
+
+        const allVariantAreReady = computed(():boolean => {
+            const { variations } = productForm
+            const truthies:boolean[] = [];
+
+            variations.forEach(variant => {
+                let truthy  = false
+                if(variant.displayMode==='THUMBNAIL_MODE') truthy = (
+                    variant.variationDescription?.trim()!== '' &&
+                    typeof variant.priceAmount !== 'undefined' &&
+                    String(variant.priceAmount)?.trim()!== '' &&
+                    typeof variant.availableSupply !== 'undefined' &&
+                    String(variant.availableSupply)?.trim()!== '' &&
+                    variant.priceCurrencyCode?.trim()!== '' &&
+                    variant.priceCurrencySymbol?.trim()!== '' &&
+                    typeof variant.variantImage !== 'undefined')
+
+                else if(variant.displayMode==='COLOR_MODE') truthy = (
+                    variant.variationDescription?.trim()!== '' &&
+                    typeof variant.priceAmount !== 'undefined' &&
+                    String(variant.priceAmount)?.trim()!== '' &&
+                    typeof variant.availableSupply !== 'undefined' &&
+                    String(variant.availableSupply)?.trim()!== '' &&
+                    variant.priceCurrencyCode?.trim()!== '' &&
+                    variant.priceCurrencySymbol?.trim()!== '' &&
+                    typeof variant.variantColor !== 'undefined')
+
+                else truthy = (
+                    variant.variationDescription?.trim()!== '' &&
+                    typeof variant.priceAmount !== 'undefined' &&
+                    String(variant.priceAmount)?.trim()!== '' &&
+                    typeof variant.availableSupply !== 'undefined' &&
+                    String(variant.availableSupply)?.trim()!== '' &&
+                    variant.priceCurrencyCode?.trim()!== '' &&
+                    variant.priceCurrencySymbol?.trim()!== ''
+                )
+                truthies.push(truthy)
+            });
+          
+            return !truthies.includes(false)
+
+        })
+
+        const isReady = computed(():boolean=>{
+            const { title, variations } = productForm
+            return title.trim() !== '' && allVariantAreReady.value
+            
         })
 
         const saving = ref(false)
@@ -187,7 +242,8 @@ import { formatDate } from '@vueuse/core';
         return {
             productForm,
             saveProduct,
-            saving
+            saving,
+            isReady
             
         }
 
@@ -202,34 +258,17 @@ import { formatDate } from '@vueuse/core';
         _fd.append('category', productData.category??'')
 
         productData.variations.forEach((variant:ProductVariationSubmit,index)=>{
-        
+            
             for(const key in variant){
                 if (Object.prototype.hasOwnProperty.call(variant, key)){
                     if(key==='variantImage'){
                         _fd.append(`variations[${index}][${key}]`, variant[key]??new Blob(),variant[key]?.name )
                     }
-                    else _fd.append(`variations[${index}][${key}]`,String(variant[key as keyof ProductVariationSubmit]))
+                    else _fd.append(`variations[${index}][${key}]`,String(variant[key as keyof ProductVariationSubmit]??''))
                 }
             }
             
         })
-    
-
-        // for (const key in productData){
-        //     const value = productData[key]
-
-        //     //Arrays
-        //     if (Array.isArray(value)){
-        //         value.forEach((element,index)=> {
-        //             for (const prop in element) {
-        //                 if(prop === 'variantImage'){
-        //                     _fd.append(`${key}[${index}][${prop}]`, element[prop]);
-        //                 }else _fd.append(`${key}[${index}][${prop}]`, element[prop]);
-        //             }
-        //         })
-        //     } else _fd.append(key,String(value))
-
-        // }
         return _fd
     }
 </script>
