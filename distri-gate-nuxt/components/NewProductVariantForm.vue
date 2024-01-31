@@ -15,7 +15,7 @@
                 <div class="label">
                     <span class="label-text-alt text-gray-500 font-bold">Variant Name</span>
                 </div>
-                <input v-model="variantData.name" type="text" placeholder="examples: XXL, Black, 200m" class="input input-sm input-bordered input-base-300 w-full" />
+                <input :disabled=disabled v-model="variantData.name" type="text" placeholder="examples: XXL, Black, 200m" class="input input-sm input-bordered input-base-300 w-full" />
                 <div class="label">
                     <span class="label-text-alt">⚠️Keep it as short as possible!</span>
                 </div>
@@ -25,7 +25,7 @@
                 <div class="label">
                     <span class="label-text-alt text-gray-500 font-bold">Description</span>
                 </div>
-                <textarea v-model="variantData.variationDescription" type="text" 
+                <textarea :disabled=disabled v-model="variantData.variationDescription" type="text" 
                             placeholder="This is an example description..." 
                             class="textarea textarea-bordered textarea-xs w-full h-[200px]">
                 </textarea>
@@ -36,43 +36,43 @@
                     <div class="label">
                         <span class="label-text-alt text-gray-500 font-bold">Currency code</span>
                     </div>
-                        <input v-model="variantData.priceCurrencyCode" type="text" placeholder="PHP" class="input input-sm input-bordered input-base-300 w-24" />
+                        <input :disabled=disabled v-model="variantData.priceCurrencyCode" type="text" placeholder="PHP" class="input input-sm input-bordered input-base-300 w-24" />
                 </label>
 
                 <label class="form-control w-full join-item">
                     <div class="label">
                         <span class="label-text-alt text-gray-500 font-bold">Currency symbol</span>
                     </div>
-                        <input v-model="variantData.priceCurrencySymbol" type="text" placeholder="₱" class="input input-sm input-bordered input-base-300 w-24" />
+                        <input :disabled=disabled v-model="variantData.priceCurrencySymbol" type="text" placeholder="₱" class="input input-sm input-bordered input-base-300 w-24" />
                 </label>
                 
                 <label class="form-control w-full join-item">
                     <div class="label">
                         <span class="label-text-alt text-gray-500 font-bold">Price Amount</span>
                     </div>
-                        <input v-model="variantData.priceAmount" type="number" placeholder="420" class="input input-sm input-bordered input-base-300 w-24" />
+                        <input :disabled=disabled v-model="variantData.priceAmount" type="number" placeholder="420" class="input input-sm input-bordered input-base-300 w-24" />
                 </label>
             </div>
-            
+
             <label class="form-control w-full">
                 <div class="label">
                     <span class="label-text-alt text-gray-500 font-bold">Available Supply</span>
                 </div>
-                <input v-model="variantData.availableSupply" type="number" placeholder="360" class="input input-sm input-bordered input-base-300 w-full" />
+                <input :disabled=disabled v-model="variantData.availableSupply" type="number" placeholder="360" class="input input-sm input-bordered input-base-300 w-full" />
             </label>
 
             <label class="form-control w-full">
                 <div class="label">
                     <span class="label-text-alt text-gray-500 font-bold">Upload Picture</span>
                 </div>
-                <button @click="openFileUploader()" class="btn btn-xs shadow w-full">Upload File</button>
+                <button :disabled=disabled @click="openFileUploader()" class="btn btn-xs shadow w-full">Upload File</button>
             </label>
         
             <label class="form-control w-full">
                 <div class="label">
                     <span class="label-text-alt text-gray-500 font-bold">Select Display Mode</span>
                 </div>
-                <select v-model="variantData.displayMode" class="select select-bordered select-sm w-full text-xs">
+                <select :disabled=disabled v-model="variantData.displayMode" class="select select-bordered select-sm w-full text-xs">
                     <option value="NAME_MODE">NAME MODE</option>
                     <option value="COLOR_MODE">COLOR MODE</option>
                     <option value="THUMBNAIL_MODE">THUMBNAIL MODE</option>
@@ -83,7 +83,7 @@
                 <div class="label">
                     <span class="label-text-alt text-gray-500 font-bold">Pick Color</span>
                 </div>
-                <input v-model="variantData.variantColor" type="color" class="input input-sm input-bordered input-base-300" />
+                <input :disabled=disabled v-model="variantData.variantColor" type="color" class="input input-sm input-bordered input-base-300" />
             
             </label>
             <button v-if="!isDefault" class="btn btn-link btn-xs no-underline" @click="emits('onRemoved', variantData.id)">
@@ -110,7 +110,8 @@ const props = defineProps<{
     radioGroup: string,
     tabLabel:string,
     variantData:ProductVariationSubmit,
-    isDefault:boolean
+    isDefault:boolean,
+    disabled:boolean
 }>()
 
 const emits = defineEmits(['photoChanged','save', 'onSelected', 'onRemoved'])
