@@ -27,7 +27,7 @@ class ProductSchema(ModelSchema):
     variations: list[ProductVariantSchema] = []
     class Meta:
         model = Product
-        fields = ('id', 'title','description','category' , 'variations', 'seller', 'default_variant')
+        fields = ('id', 'title','category' , 'variations', 'seller', 'default_variant')
 
 
 
