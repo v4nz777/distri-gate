@@ -13,9 +13,9 @@ export type Alert = {
 
 
 export type Item = {
-    variantId: number;
+    variantId: string;
     quantity: number;
-    productId: number;
+    productId: string;
     productTitle: string;
     productVariant: ProductVariation;
     selectedVariantIndex?: number;
@@ -28,7 +28,7 @@ export type Product = {
     description:string;
     category:string;
     variations: ProductVariation[];
-    default_variant: number;
+    default_variant: string;
     discounted:boolean;
     new:boolean;
     original:boolean;

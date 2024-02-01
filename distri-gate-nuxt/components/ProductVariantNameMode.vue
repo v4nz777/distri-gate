@@ -17,7 +17,7 @@
 <script setup lang="ts">
     import type { ProductVariation } from '~/types';
 
-    const selectedVariant = defineModel<number>({default:undefined})
+    const selectedVariant = defineModel<string>({default:undefined})
 
     const props = defineProps<{
         variant: ProductVariation,

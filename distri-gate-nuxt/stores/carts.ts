@@ -81,7 +81,7 @@ export const useCart = defineStore('cart-store', ()=> {
             })
         }
 
-        const changeQuantity = (id:number, action:string) => {
+        const changeQuantity = (id:string, action:string) => {
             const foundIndex = getMyIndex(id)
             if(action === 'increase') increaseQuantity(id)
             else if(action === 'decrease')decreaseQuantity(id)
@@ -89,7 +89,7 @@ export const useCart = defineStore('cart-store', ()=> {
             if(items.value[foundIndex].quantity < 1) removeItem(id)
         }
 
-        const increaseQuantity = (variantId:number)=> {
+        const increaseQuantity = (variantId:string)=> {
             const foundIndex = getMyIndex(variantId)
 
             const variantSupply = items.value[foundIndex].productVariant.supply_quantity
@@ -107,21 +107,21 @@ export const useCart = defineStore('cart-store', ()=> {
             items.value[foundIndex].quantity ++
         }
 
-        const decreaseQuantity = (variantId:number)=> {
+        const decreaseQuantity = (variantId:string)=> {
             const foundIndex = getMyIndex(variantId)
             items.value[foundIndex].quantity--
         }
 
 
 
-        const removeItem = (id:number) => {
+        const removeItem = (id:string) => {
             const foundIndex = getMyIndex(id)
             items.value.splice(foundIndex,1)
 
            
         }
 
-        const getMyIndex = (id:number) => items.value.findIndex((i:Item)=>i.variantId === id)
+        const getMyIndex = (id:string) => items.value.findIndex((i:Item)=>i.variantId === id)
 
         /**  Input an Array of valid codes from giftcodes database */
         const validateGiftCode = (sourceValidGiftCodes:GiftCode[]) => {
@@ -136,7 +136,7 @@ export const useCart = defineStore('cart-store', ()=> {
             }
         }
 
-        const getItemCountFromCart = (itemId:number)=> {
+        const getItemCountFromCart = (itemId:string)=> {
             return items.value[getMyIndex(itemId)]?.quantity
         }
 

@@ -138,7 +138,7 @@
 
     const selectedVariantSupplyLeft = computed(()=> product.value?.variations[selectedVariantIndex.value].supply_quantity??0)
 
-    const selectedVariant = ref<number|undefined>(undefined)
+    const selectedVariant = ref<string|undefined>(undefined)
 
     const isVariantSoldOut = computed(()=>selectedVariantSupplyLeft.value<1)
 
