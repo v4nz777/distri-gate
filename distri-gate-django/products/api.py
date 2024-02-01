@@ -6,7 +6,7 @@ from users.models import User
 from products.models import Product, ProductVariant
 from products.schemas import ProductSchema, ProductVariantSchema
 from products.schemas import ProductInput, VariantInput
-from products.utils import transform_product_input_data, save_new_product
+from products.utils import transform_product_input_data, save_new_product, update_product
 
 from distrigate.security import require_token
 from django.http import HttpRequest, JsonResponse
@@ -33,10 +33,9 @@ def get_product(request:HttpRequest,id:int):
 
 
 
-@app.post('add_new_product', response=ProductSchema)
+@app.post('add_or_update_product', response=ProductSchema)
 # @require_token
-def add_new_product(request:HttpRequest):
-    
+def add_or_update_product(request:HttpRequest):
     
     product_input:ProductInput = transform_product_input_data(request)
     
@@ -45,14 +44,15 @@ def add_new_product(request:HttpRequest):
 
     if not user.is_superuser:
         return JsonResponse({'message': 'Must be a superuser to access'}, status=401)
-
-    if Product.objects.filter(id=product_input.temporary_id).exists():
-        # Todo edit new product:
-        pass
-    else:    
-        product = save_new_product(product_input,user)
-
     
-    return product
+    try:
+        product = Product.objects.get(id=product_input.temporary_id)
+        update_product(product,product_input)
+
+    except Product.DoesNotExist:
+        product = save_new_product(product_input,user)
+    
+    finally:
+        return product
 
     
