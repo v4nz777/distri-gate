@@ -26,7 +26,6 @@ export type Product = {
     id:number;
     title:string;
     description:string;
-    image:string;
     category:string;
     variations: ProductVariation[];
     default_variant: number;
@@ -108,6 +107,7 @@ export type AddressSubmit = {
 export type ProductSubmit = {
     title: string
     category?: string
+    id: string
     variations: ProductVariationSubmit[]
 }
 
