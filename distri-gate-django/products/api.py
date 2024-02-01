@@ -46,8 +46,12 @@ def add_new_product(request:HttpRequest):
     if not user.is_superuser:
         return JsonResponse({'message': 'Must be a superuser to access'}, status=401)
 
-    product = save_new_product(product_input,user)
-    
+    if Product.objects.filter(id=product_input.temporary_id).exists():
+        # Todo edit new product:
+        pass
+    else:    
+        save_new_product(product_input,user)
+
     
     return Product.objects.all()
 
