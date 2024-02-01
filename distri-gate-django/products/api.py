@@ -33,8 +33,8 @@ def get_product(request:HttpRequest,id:int):
 
 
 
-@app.post('add_new_product', response=list[ProductSchema])
-@require_token
+@app.post('add_new_product', response=ProductSchema)
+# @require_token
 def add_new_product(request:HttpRequest):
     
     
@@ -50,9 +50,9 @@ def add_new_product(request:HttpRequest):
         # Todo edit new product:
         pass
     else:    
-        save_new_product(product_input,user)
+        product = save_new_product(product_input,user)
 
     
-    return Product.objects.all()
+    return product
 
     
