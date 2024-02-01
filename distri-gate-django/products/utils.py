@@ -7,6 +7,21 @@ from django.core.files.base import ContentFile
 
 
 
+def update_product(existing_product:Product, changed:ProductInput)->Product:
+    existing_product.title = changed.title
+    existing_product.category = changed.category
+
+    added_variants = set_variants_and_add_default(existing_product,changed)
+
+    # Remove variants that are not in changed
+    updated_variants = filter_out_variants(added_variants,existing_product)
+
+    return existing_product
+
+
+
+
+
 def save_new_product(product_input:ProductInput, seller:User)-> Product:
     new_product = Product.objects.create(
         title = product_input.title,
@@ -14,30 +29,107 @@ def save_new_product(product_input:ProductInput, seller:User)-> Product:
         seller = seller
     )
 
-    for variant in product_input.variations:
-        # Initiating new variant
-        new_variant = ProductVariant.objects.create(
-            group = new_product,
-            type  = variant.type,
-            name  = variant.name,
-            variant_description = variant.variation_description,
-            price_amount  = variant.price_amount,
-            price_currency_code    = variant.price_currency_code,
-            price_currency_symbol  = variant.price_currency_symbol
-        )
-   
-        # Add the image to the variant
-        if variant.variant_image != b'':
-            new_variant.variant_image.save(
-                variant.variant_image_name,
-                ContentFile(variant.variant_image,variant.variant_image_name),
-                save=True)
-
-        # Add variant to product
-        new_product.variations.add(new_variant)
+    set_variants_and_add_default(new_product,product_input.variations)
     
     new_product.save()
     return new_product
+
+
+
+
+
+def filter_out_variants(added_variants:list[ProductVariant], _from:Product)->list[ProductVariant]:
+    """Remove variants from product if not in the list of `added_variants`"""
+
+    current_variants = _from.variations
+
+    for current in current_variants:
+        if current not in added_variants:
+            current_variants.remove(current)
+    
+    _from.save()
+    
+    return _from.variations
+
+
+
+
+def set_variants_and_add_default(product:Product,variants_input:list[VariantInput])->list[ProductVariant]:
+
+    added_variants = []
+
+    for variant in variants_input:
+
+        # This will likely trigger for updating product
+        if ProductVariant.objects.filter(id=variant.temporary_id).exists():
+            target_variant = ProductVariant.objects.get(id=variant.temporary_id)
+            update_variant(target_variant,variant)
+        # This will likely trigger on new product
+        else:
+            target_variant = save_new_variant(variant,product)
+        
+        # Add variant to product
+        product.variations.add(target_variant)
+
+        # Set as default variant
+        if variant.is_default:
+            product.default_variant = ProductVariant.objects.get(id=variant.temporary_id)
+        
+        added_variants.append(target_variant)
+
+    product.save()
+    return added_variants
+
+
+
+
+def update_variant(variant:ProductVariant, changes:VariantInput)->ProductVariant:
+    variant.name = changes.name
+    variant.type = changes.type
+    variant.name = changes.name
+    variant.variant_description = changes.variation_description
+    variant.price_amount = changes.price_amount
+    variant.price_currency_code = changes.price_currency_code
+    variant.price_currency_symbol = changes.price_currency_symbol
+    
+    # avoid image duplication:
+    if variant.variant_image.name != changes.variant_image_name and variant.variant_image != b'':
+        
+        variant.variant_image.save(
+            changes.variant_image_name,
+            ContentFile(changes.variant_image,changes.variant_image_name),
+            save=True)
+
+    variant.save()
+    return variant
+
+
+
+
+
+def save_new_variant(variant:VariantInput, group:Product)->ProductVariant:
+    # Initiating new variant
+    new_variant = ProductVariant.objects.create(
+        id    = variant.temporary_id,
+        group = group,
+        type  = variant.type,
+        name  = variant.name,
+        variant_description = variant.variation_description,
+        price_amount  = variant.price_amount,
+        price_currency_code    = variant.price_currency_code,
+        price_currency_symbol  = variant.price_currency_symbol
+    )
+
+    # Add the image to the variant
+    if variant.variant_image != b'':
+        new_variant.variant_image.save(
+            variant.variant_image_name,
+            ContentFile(variant.variant_image,variant.variant_image_name),
+            save=True)
+        
+    new_variant.save()
+    return new_variant
+
 
 
 
