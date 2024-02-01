@@ -10,12 +10,11 @@ from django.core.files.base import ContentFile
 
 
 class Product(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = ShortUUIDField(primary_key=True)
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=499, blank=True, null=True)
     category = models.CharField(blank=True, null=True)
     slug = AutoSlugField(populate_from='title')
-    image = models.ImageField(upload_to='product_image', null=True, blank=True)
     variations = models.ManyToManyField('ProductVariant', default=[], related_name='product_variations', blank=True)
     default_variant = models.ForeignKey('ProductVariant', on_delete=models.SET_NULL, blank=True, null=True, related_name='default_variant')
     seller = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='seller')
