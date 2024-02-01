@@ -12,7 +12,6 @@ from django.core.files.base import ContentFile
 class Product(models.Model):
     id = ShortUUIDField(primary_key=True)
     title = models.CharField(max_length=200)
-    description = models.CharField(max_length=499, blank=True, null=True)
     category = models.CharField(blank=True, null=True)
     slug = AutoSlugField(populate_from='title')
     variations = models.ManyToManyField('ProductVariant', default=[], related_name='product_variations', blank=True)
