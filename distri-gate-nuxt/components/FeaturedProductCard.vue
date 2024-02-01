@@ -1,7 +1,7 @@
 <template>
     <div class="card w-52 bg-base-100 shadow-xl hover:scale-105 h-full" @click="navigateTo('/products')">
         <figure class=" w-full h-[270px] min-h-[260px]">
-            <UseImage :src="product?product.image:''" alt="" class="rounded-xl h-full">
+            <UseImage :src="product?product.variations[0].variant_image??''" alt="" class="rounded-xl h-full">
                 <template #loading>
                     <LogoAnimationLoading class="w-full h-full object-contain"/>
                 </template>
