@@ -23,7 +23,7 @@ export type Item = {
 }
 
 export type Product = {
-    id:number;
+    id:string;
     title:string;
     description:string;
     category:string;
@@ -37,7 +37,7 @@ export type Product = {
 
 
 export type ProductVariation = {
-    id: number
+    id: string
     name: string
     type: string
     variant_image?: string
