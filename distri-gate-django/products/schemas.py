@@ -34,7 +34,7 @@ class ProductSchema(ModelSchema):
 
 
 class ProductInput(BaseModel):
-
+    temporary_id:           str
     title:                  str
     category:               str   | None = ''
     variations:             list['VariantInput'] = []
@@ -42,7 +42,7 @@ class ProductInput(BaseModel):
 
 
 class VariantInput(BaseModel):
-
+    temporary_id:           str
     name:                   str
     type:                   str   | None  = 'NAME_MODE'
     variant_image:          bytes | None  = None

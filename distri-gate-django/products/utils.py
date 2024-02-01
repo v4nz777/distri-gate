@@ -46,6 +46,7 @@ def transform_product_input_data(request:HttpRequest)->ProductInput:
     
     title = request.POST.get('title')
     category = request.POST.get('category')
+    product_id = request.POST.get('id')
     variations = {}
 
     for key,value in request.POST.lists():
@@ -74,6 +75,7 @@ def transform_product_input_data(request:HttpRequest)->ProductInput:
     for variant in variations:
         converted = VariantInput(
             name = variations[variant]['name'][0],
+            temporary_id = variations[variant]['id'][0],
             type = variations[variant]['displayMode'][0],
             variant_image = variations[variant]['variantImage'],
             variant_image_name = variations[variant]['variantImageName'],
@@ -93,6 +95,7 @@ def transform_product_input_data(request:HttpRequest)->ProductInput:
     return ProductInput(
         title=title,
         category=category,
+        temporary_id=product_id,
         variations=variant_input_list
     )
     
