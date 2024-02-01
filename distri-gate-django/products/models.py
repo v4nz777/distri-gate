@@ -57,7 +57,7 @@ class ThumbnailStorage(S3Boto3Storage):
 
 class ProductVariant(models.Model):
     
-    id = models.AutoField(primary_key=True)
+    id = models.CharField(primary_key=True, max_length=100)
     group = models.ForeignKey(Product, on_delete=models.CASCADE ,related_name='variation_group')
     group_slug = AutoSlugField(populate_from='group')
     variant_description = models.CharField(max_length=499, blank=True, null=True)
