@@ -232,6 +232,7 @@
 
         const update_product_from_server = (incoming:ProductSubmit)=>{
             productForm.id = incoming.id
+            productForm.title = incoming.title
             productForm.category = incoming.category
             productForm.variations = incoming.variations
         }
