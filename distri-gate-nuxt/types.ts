@@ -39,7 +39,7 @@ export type Product = {
 export type ProductVariation = {
     id: string
     name: string
-    type: string
+    type: "NAME_MODE" | "THUMBNAIL_MODE" | "COLOR_MODE"
     variant_image?: string
     variant_color?: string
     variant_thumbnail?:string

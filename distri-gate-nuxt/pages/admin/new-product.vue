@@ -14,6 +14,7 @@
               </UseImage>
           </figure>
         </div>
+  
         <div class="w-full max-w-md  grid grid-cols-1 content-start gap-5">
             <label class="form-control w-full">
                 <div class="label flex">
@@ -52,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-    import type { ProductSubmit, ProductVariationSubmit } from '~/types';
+    import type { ProductSubmit, ProductVariationSubmit, Product } from '~/types';
     import { UseImage } from '@vueuse/components';
     import { v4 as uuidv4 } from 'uuid';
     import { getIndexFromIdAndArray } from '~/utils'
@@ -162,6 +163,7 @@
         const productForm  = reactive<ProductSubmit>({
             title: '',
             category: '',
+            id: `tempPID-${uuidv4()}`,
             variations: [{
                 id:uuidv4(),
                 name: undefined,
@@ -226,17 +228,28 @@
         })
 
         const saving = ref(false)
+
+
+        const update_product_from_server = (incoming:ProductSubmit)=>{
+            productForm.id = incoming.id
+            productForm.category = incoming.category
+            productForm.variations = incoming.variations
+        }
         
         const saveProduct =  async () => {
             saving.value = true
             const productData = structuredClone(toRaw(productForm))
 
             const fd = toFormData(productData)
-            const response = await $fetch('/api/products/new-product',{
+            const response = await $fetch<Promise<Product>>('/api/products/new-product',{
                 method: 'post',
                 body: fd
                 
             })
+            const transformedData = transformProductToProductSubmit(response)
+            update_product_from_server(transformedData)
+            
+
             saving.value = false
         }
 
@@ -257,12 +270,14 @@
 
         _fd.append('title', productData.title)
         _fd.append('category', productData.category??'')
+        _fd.append('id',productData.id)
 
         productData.variations.forEach((variant:ProductVariationSubmit,index)=>{
             
             for(const key in variant){
                 if (Object.prototype.hasOwnProperty.call(variant, key)){
                     if(key==='variantImage'){
+                        
                         _fd.append(`variations[${index}][${key}]`, variant[key]??new Blob(),variant[key]?.name )
                     }
                     else _fd.append(`variations[${index}][${key}]`,String(variant[key as keyof ProductVariationSubmit]??''))
@@ -270,7 +285,52 @@
             }
             
         })
+        for (const pair of _fd.entries()) {
+        console.log(pair[0], pair[1]);
+        }
         return _fd
+    }
+
+    function transformProductToProductSubmit(product:Product):ProductSubmit{
+        // Transorm incoming data to variations[]
+        
+        let variations:ProductVariationSubmit[] = []
+        product.variations.forEach(variant=>{
+            const variant_data:ProductVariationSubmit = {
+                id:variant.id,
+                name: variant.name,
+                displayMode: variant.type,
+                default: product.default_variant === variant.id,
+                variantColor: variant.variant_color,
+                priceAmount: String(variant.price_amount),
+                priceCurrencyCode: variant.price_currency_code,
+                priceCurrencySymbol: variant.price_currency_symbol,
+                variationDescription: variant.variant_description,
+                availableSupply: String(variant.supply_quantity),
+                variantImage:urlToBlob(variant.variant_image)
+
+            }
+            variations.push(variant_data)
+        })
+
+        // Transorm incoming data to Product
+        const transformedData:ProductSubmit = {
+            title: product.title,
+            id: product.id,
+            variations: variations
+        }
+
+        return transformedData
+    }   
+
+    function urlToBlob(url:string|undefined|null){
+        if(!url)return null
+        $fetch<Response>(url)
+        .then(res=>res.blob())
+        .then(blob => {
+            return blob
+        })
+        
     }
 </script>
 
