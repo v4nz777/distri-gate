@@ -285,9 +285,7 @@
             }
             
         })
-        for (const pair of _fd.entries()) {
-        console.log(pair[0], pair[1]);
-        }
+
         return _fd
     }
 
