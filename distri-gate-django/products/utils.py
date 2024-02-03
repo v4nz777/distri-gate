@@ -12,10 +12,11 @@ def update_product(existing_product:Product, changed:ProductInput)->Product:
     existing_product.title = changed.title
     existing_product.category = changed.category
     existing_product.save()
-
+    
     added_variants = set_variants_and_add_default(existing_product,changed.variations)
 
     # Remove variants that are not in changed
+   
     updated_variants = filter_out_variants(added_variants,existing_product)
     
     return existing_product
@@ -42,13 +43,13 @@ def save_new_product(product_input:ProductInput, seller:User)-> Product:
 
 def filter_out_variants(added_variants:list[ProductVariant], _from:Product)->list[ProductVariant]:
     """Remove variants from product if not in the list of `added_variants`"""
-
-    current_variants = _from.variations
-
-    for current in current_variants:
-        if current not in added_variants:
-            current_variants.remove(current)
     
+    for current in _from.variations.all():
+        if current not in added_variants:
+            
+            _from.variations.remove(current)
+            current.delete()
+
     _from.save()
     
     return _from.variations
@@ -63,17 +64,18 @@ def set_variants_and_add_default(product:Product,variants_input:list[VariantInpu
   
     for variant in variants_input:
         
-        # This will likely trigger for updating product
+        # This will likely trigger for updating existing variants
         if ProductVariant.objects.filter(id=variant.temporary_id).exists():
             target_variant = ProductVariant.objects.get(id=variant.temporary_id)
             update_variant(target_variant,variant)
-        # This will likely trigger on new product
+
+        # This will likely trigger for new variants
         else:
-           
             target_variant = save_new_variant(variant,product)
         
         # Add variant to product
         product.variations.add(target_variant)
+        product.save()
 
         # Set as default variant
         if variant.is_default:
@@ -88,7 +90,6 @@ def set_variants_and_add_default(product:Product,variants_input:list[VariantInpu
 
 
 def update_variant(variant:ProductVariant, changes:VariantInput)->ProductVariant:
-    
     variant.name = changes.name
     variant.type = changes.type
     variant.name = changes.name
@@ -96,16 +97,19 @@ def update_variant(variant:ProductVariant, changes:VariantInput)->ProductVariant
     variant.price_amount = changes.price_amount
     variant.price_currency_code = changes.price_currency_code
     variant.price_currency_symbol = changes.price_currency_symbol
-    
+    variant.variant_color = changes.variant_color
+    variant.supply_quantity = changes.supply_quantity
+
     variant.save()
 
-    # avoid image duplication:
-    if variant.variant_image.name != changes.variant_image_name and variant.variant_image != b'':
-        
+    # when image is removed from frontend.
+    if changes.variant_image != b'':
         variant.variant_image.save(
             changes.variant_image_name,
             ContentFile(changes.variant_image,changes.variant_image_name),
             save=True)
+    else:
+        variant.variant_image = None
 
     variant.save()
     
@@ -125,7 +129,9 @@ def save_new_variant(variant:VariantInput, group:Product)->ProductVariant:
         variant_description = variant.variation_description,
         price_amount  = variant.price_amount,
         price_currency_code    = variant.price_currency_code,
-        price_currency_symbol  = variant.price_currency_symbol
+        price_currency_symbol  = variant.price_currency_symbol,
+        variant_color = variant.variant_color,
+        supply_quantity = variant.supply_quantity
     )
 
     # Add the image to the variant
@@ -166,6 +172,7 @@ def transform_product_input_data(request:HttpRequest)->ProductInput:
     # Handle file upload
     for variant_index in variations:
         image:InMemoryUploadedFile = request.FILES.get(f'variations[{variant_index}][variantImage]')
+
         variations[variant_index]['variantImage']=image.read()
         variations[variant_index]['variantImageName']=image.name
 
