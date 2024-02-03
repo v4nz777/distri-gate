@@ -81,7 +81,7 @@ class ProductVariant(models.Model):
 
     def save(self, *args, **kwargs) -> None:
 
-        if self.variant_image:
+        if self.variant_image and self.type == 'THUMBNAIL_MODE':
             self.create_thumbnail()
 
         super().save( *args, **kwargs)
