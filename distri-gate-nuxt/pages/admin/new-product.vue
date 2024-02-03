@@ -63,6 +63,8 @@
         layout: 'admin'
     })
 
+    const alerstore = useAlertStore()
+
 
     // Variant Forms
     const { 
@@ -230,28 +232,35 @@
         const saving = ref(false)
 
 
-        const update_product_from_server = (incoming:ProductSubmit)=>{
-            productForm.id = incoming.id
-            productForm.title = incoming.title
-            productForm.category = incoming.category
-            productForm.variations = incoming.variations
-        }
+
         
         const saveProduct =  async () => {
             saving.value = true
             const productData = structuredClone(toRaw(productForm))
 
             const fd = toFormData(productData)
-            const response = await $fetch<Promise<Product>>('/api/products/new-product',{
-                method: 'post',
-                body: fd
-                
-            })
-            const transformedData = transformProductToProductSubmit(response)
-            update_product_from_server(transformedData)
-            
+            try {
+                const response = await $fetch<Promise<Product>>('/api/products/new-product',{
+                    method: 'post',
+                    body: fd
+                })
+                productData.id = response.id
 
-            saving.value = false
+                alerstore.addAlert({
+                    id: 'tempId',
+                    message: `Product: ${productData.id} is saved!`,
+                    type: 'success',
+                    shown: true
+                })
+            } catch(error) {
+                alerstore.addAlert({
+                    id: 'tempId',
+                    message: 'Error occured while saving product.',
+                    type: 'error',
+                    shown: true
+                })
+            }
+            finally { saving.value = false }
         }
 
         return {
@@ -290,46 +299,14 @@
         return _fd
     }
 
-    function transformProductToProductSubmit(product:Product):ProductSubmit{
-        // Transorm incoming data to variations[]
+ 
+
+    function getFileNameFromUrl(url:string|null|undefined):string{
+        if(!url)return "" 
+        const match =  url.match(/\/([^\/?#]+)(\?.*)?$/)
         
-        let variations:ProductVariationSubmit[] = []
-        product.variations.forEach(variant=>{
-            const variant_data:ProductVariationSubmit = {
-                id:variant.id,
-                name: variant.name,
-                displayMode: variant.type,
-                default: product.default_variant === variant.id,
-                variantColor: variant.variant_color,
-                priceAmount: String(variant.price_amount),
-                priceCurrencyCode: variant.price_currency_code,
-                priceCurrencySymbol: variant.price_currency_symbol,
-                variationDescription: variant.variant_description,
-                availableSupply: String(variant.supply_quantity),
-                variantImage:urlToBlob(variant.variant_image)
+        return match?match[1]:""
 
-            }
-            variations.push(variant_data)
-        })
-
-        // Transorm incoming data to Product
-        const transformedData:ProductSubmit = {
-            title: product.title,
-            id: product.id,
-            variations: variations
-        }
-
-        return transformedData
-    }   
-
-    function urlToBlob(url:string|undefined|null){
-        if(!url)return null
-        $fetch<Response>(url)
-        .then(res=>res.blob())
-        .then(blob => {
-            return blob
-        })
-        
     }
 </script>
 
