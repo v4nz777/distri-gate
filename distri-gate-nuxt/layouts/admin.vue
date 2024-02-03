@@ -16,6 +16,7 @@
         </aside>
         <main class="w-full h-full p-10 pb-20">
             <slot/>
+            <AlertsGroup/>
         </main>
     </div>
     
