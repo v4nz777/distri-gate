@@ -1,8 +1,14 @@
 <template>
-    
+    <div class="w-full h-16 bg-white shadow-md rounded-box flex items-center p-5">
+        <span class="loading loading-bars loading-xs" v-if="saving"></span>
+        <button class="btn btn-primary btn-xs flex gap-0" v-else @click="saveProduct" :disabled="!isReady">
+            <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M4 6C4 4.89543 4.89543 4 6 4H12H14.1716C14.702 4 15.2107 4.21071 15.5858 4.58579L19.4142 8.41421C19.7893 8.78929 20 9.29799 20 9.82843V12V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M8 4H13V7C13 7.55228 12.5523 8 12 8H9C8.44772 8 8 7.55228 8 7V4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M7 15C7 13.8954 7.89543 13 9 13H15C16.1046 13 17 13.8954 17 15V20H7V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+            <span>Save Product</span>
+        </button>
+    </div>
+
     <div class="w-full h-max flex max-md:flex-col max-md:items-start mt-5 justify-start gap-10">
         <div class="w-full min-w-[12rem] max-w-md grid grid-cols-1 gap-3 content-start">
-          {{ productForm }}
           <figure class="p-5 hover:scale-125  ease-in-out duration-1000">
               <UseImage :src="temporaryPhoto" class="w-full h-full object-contain drop-shadow-lg">
                   <template #loading>
@@ -21,8 +27,7 @@
             <label class="form-control w-full">
                 <div class="label flex">
                     <span class="label-text-alt text-gray-500 font-bold">Product Title</span>
-                    <span class="loading loading-bars loading-xs" v-if="saving"></span>
-                    <button class="btn btn-primary btn-xs" v-else @click="saveProduct" :disabled="!isReady">Save Product</button>
+                    
                 </div>
                 <input :disabled="saving" type="text" placeholder="Premium Product X" class="input input-sm input-bordered input-base-300 w-full shadow" 
                     v-model="productForm.title" />
@@ -30,6 +35,7 @@
 
 
             <ClientOnly>
+                
                 <div role="tablist" class="tabs tabs-lifted pb-10 tabs-lg">
                         <NewProductVariantForm v-for="forme in productForm.variations" :key="forme.id" 
                             v-model="selectedVariantForm"
@@ -53,6 +59,9 @@
          
         </div>
         
+    </div>
+    <div class="bg-red-500 w-full my-20">
+            fds
     </div>
 </template>
 
@@ -124,6 +133,7 @@
         const removeVariantForm = (variantId:string)=>{
             const index = getIndexFromIdAndArray(variantId,productForm.variations)
             productForm.variations.splice(index,1)
+            console.log(productForm.variations[0].id)
             selectedVariantForm.value = productForm.variations[0].id
         }
 
