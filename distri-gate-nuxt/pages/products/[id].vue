@@ -51,17 +51,22 @@
                     <li v-for="variant in product?.variations">
 
                         <ProductVariantNameMode v-if="variant.type === 'NAME_MODE'"
-                            :variant="variant" 
+                            :variantId="variant.id"
+                            :variantName="variant.name"
                             inputRadioGroupName="product-variant" 
                             v-model="selectedVariant"/>
                             
                         <ProductVariantColorMode v-else-if="variant.type === 'COLOR_MODE'"
-                            :variant="variant" 
+                            :variantId="variant.id"
+                            :variantName="variant.name"
+                            :variantColor="variant.variant_color??'gray'"
                             inputRadioGroupName="product-variant" 
                             v-model="selectedVariant"/>
 
                         <ProductVariantThumbnailMode v-else-if="variant.type === 'THUMBNAIL_MODE'"
-                            :variant="variant" 
+                            :variantId="variant.id"
+                            :variantName="variant.name" 
+                            :variantThumbnail="variant.variant_thumbnail??''"
                             inputRadioGroupName="product-variant" 
                             v-model="selectedVariant"/>
                    

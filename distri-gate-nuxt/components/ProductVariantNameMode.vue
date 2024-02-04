@@ -1,26 +1,27 @@
 <template>
     
-    <label :for="`variant-${variant.id}`" 
+    <label :for="`variant-${variantId}`" 
         class="btn btn-xs"
-        :class="variant.id === selectedVariant?'border-2 hover:border-2 border-primary hover:border-primary':''">
-        {{ variant.name }}
+        :class="variantId === selectedVariant?'border-2 hover:border-2 border-primary hover:border-primary':''">
+        {{ variantName }}
     </label>
 
     <input class="hidden" 
             type="radio" 
             :name="inputRadioGroupName" 
-            :id="`variant-${variant.id}`" 
+            :id="`variant-${variantId}`" 
             v-model="selectedVariant" 
-            :value="variant.id"/>
+            :value="variantId"/>
 </template>
 
 <script setup lang="ts">
-    import type { ProductVariation } from '~/types';
+   
 
     const selectedVariant = defineModel<string>({default:undefined})
 
     const props = defineProps<{
-        variant: ProductVariation,
+        variantId: string,
+        variantName: string,
         inputRadioGroupName:string
     }>()
 

@@ -20,6 +20,7 @@
 <script setup lang="ts">
     const router = useRoute()
     const { open } = defineProps(['open'])
+
 </script>
 
 <style scoped>

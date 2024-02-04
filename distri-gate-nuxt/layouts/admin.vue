@@ -9,12 +9,14 @@
                     </a>
                 </li>
                 <li>
-                    <AdminItemStore :open="links.store.find(name=>name===router.name)"/>
+                    <AdminItemStore :open="links.store.some(item=>item.link===router.name)"/>
                 </li>
           
             </ul>
         </aside>
         <main class="w-full h-full p-10 pb-20">
+            <h1 class="font-bold text-lg">{{ title }}</h1>
+            <div class="divider"></div>
             <slot/>
             <AlertsGroup/>
         </main>
@@ -25,8 +27,20 @@
 <script setup lang="ts">
     const router = useRoute()
 
+    const title = computed(()=>{
+        return links.store.find(item=>item.link===router.name)?.title
+    })
     const links = {
-        store: ['admin-products', 'admin-new-product']
+        store: [
+            {   
+                title: 'Products',
+                link:'admin-products'
+            }, 
+            {   
+                title: 'Add Product',
+                link:'admin-new-product'
+            }
+        ]
     }
     
 </script>

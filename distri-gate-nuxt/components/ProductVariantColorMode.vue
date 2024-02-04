@@ -1,28 +1,31 @@
 <template>
     
-    <label :for="`variant-${variant.id}`" class="cursor-pointer">
+    <label :for="`variant-${variantId}`" class="cursor-pointer tooltip hover:after:delay-1000" :data-tip="variantName">
         <div class="w-6 h-6 rounded-md shadow-md" ref="colorBody"
-        :class="variant.id === selectedVariant?'border-2 hover:border-2 border-primary hover:border-primary':''">
+        :class="variantId === selectedVariant?'border-2 hover:border-2 border-primary hover:border-primary':''">
         </div>
     </label>
+
+
 
     <input class="hidden"
             type="radio" 
             :name="inputRadioGroupName" 
-            :id="`variant-${variant.id}`" 
+            :id="`variant-${variantId}`" 
             v-model="selectedVariant" 
-            :value="variant.id"/>
+            :value="variantId"/>
 </template>
 
 <script setup lang="ts">
     import type { ProductVariation } from '~/types';
 
-    const selectedVariant = defineModel<string>({default:undefined})
+    const selectedVariant = defineModel<string>({default:null})
 
     const props = defineProps<{
-        variant: ProductVariation,
+        variantName: string,
         inputRadioGroupName:string,
-        variantColor?:string
+        variantId:string,
+        variantColor:string
     }>()
 
     const colorBody = ref<HTMLDivElement>()
@@ -34,7 +37,11 @@
     }
 
     onMounted(() => {
-        setColor(props.variant.variant_color)
+        setColor(props.variantColor)
+    })
+
+    watch(()=>props.variantColor, (value)=>{
+        setColor(value)
     })
 
 </script>
