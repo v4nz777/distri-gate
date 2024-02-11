@@ -73,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'distrigate.wsgi.application'
+WSGI_APPLICATION = 'distrigate.wsgi.app'
 
 
 # Database
