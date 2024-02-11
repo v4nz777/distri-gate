@@ -7,13 +7,14 @@ export default defineNuxtRouteMiddleware((to, from) => {
     if(to.name==='cart' || to.name==='cart-checkout' || to.name==='cart-payment'){
         if (process.client) {
             if(cartstore.items.length < 1) return navigateTo('/products')
-        }
+        } else return
     }
 
      // For login if not authenticated
      if(to.name==='cart-checkout'||to.name==='cart-payment'||to.name==='cart-complete'){
            
         if(!userstore.isAuthenticated){
+            
             return abortNavigation()
         }
     }

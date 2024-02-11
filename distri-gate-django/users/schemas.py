@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class AddressSchema(ModelSchema):
     class Meta:
         model = Address
-        fields = ('id','full_address_string','address_line', 'street', 'city', 'province', 'country', 'postal_code')
+        fields = ('id','full_address_string','address_line', 'street', 'city', 'province', 'country', 'postal_code', 'contact', 'contact_person')
 
 
 class AddressIn(BaseModel):
@@ -16,6 +16,8 @@ class AddressIn(BaseModel):
     form_postal_code: str
     form_province: str
     form_country: str
+    form_contact: str
+    form_contact_person: str
 
 
 

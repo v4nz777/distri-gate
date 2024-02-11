@@ -3,7 +3,7 @@
 
 export type Alert = {
     id: string
-    type: 'temporary'|'error'|'sticky'
+    type: 'temporary'|'error'|'sticky'|'success'
     css_class?: string
     message: string
     shown: boolean
@@ -13,23 +13,41 @@ export type Alert = {
 
 
 export type Item = {
-    id: number;
+    variantId: string;
     quantity: number;
-    product: Product;
+    productId: string;
+    productTitle: string;
+    productVariant: ProductVariation;
+    selectedVariantIndex?: number;
     selected:boolean;
 }
 
 export type Product = {
-    id:number;
+    id:string;
     title:string;
     description:string;
-    price:Price
-    image:string;
     category:string;
-    rating:{
-        rate: number,
-        count:number
-    }
+    variations: ProductVariation[];
+    default_variant: string;
+    discounted:boolean;
+    new:boolean;
+    original:boolean;
+}
+
+
+
+export type ProductVariation = {
+    id: string
+    name: string
+    type: "NAME_MODE" | "THUMBNAIL_MODE" | "COLOR_MODE"
+    variant_image?: string
+    variant_color?: string
+    variant_thumbnail?:string
+    price_amount: number
+    price_currency_code: string
+    price_currency_symbol: string
+    variant_description: string
+    supply_quantity: number
 }
 
 export type GiftCode = {
@@ -37,11 +55,6 @@ export type GiftCode = {
     discount?: number
 }
 
-export type Price = {
-    currency: string
-    currency_symbol: string
-    amount: number
-}
 
 export type AccessToken = {
     access_token: string
@@ -56,15 +69,8 @@ export type Address = {
     province: string
     country: string
     postal_code: string
-}
-
-export type AddressSubmit = {
-    form_address_line?:string
-    form_street?:string
-    form_city:string
-    form_postal_code:string
-    form_province:string
-    form_country:string
+    contact: string
+    contact_person: string
 }
 
 export interface User {
@@ -83,4 +89,45 @@ export interface PrivateUser extends User {
     email?: string
     contact_number?: string
     
+}
+
+
+
+export type AddressSubmit = {
+    form_contact_person:string
+    form_contact:string
+    form_address_line?:string
+    form_street?:string
+    form_city:string
+    form_postal_code:string
+    form_province:string
+    form_country:string
+}
+
+export type ProductSubmit = {
+    title: string
+    category?: string
+    id: string
+    variations: ProductVariationSubmit[]
+}
+
+export type ProductVariationSubmit = {
+    id:string
+    name?: string
+    displayMode: 'NAME_MODE' | 'THUMBNAIL_MODE'| 'COLOR_MODE'
+    variantImage?: File | null
+    variantColor?:string
+    priceAmount?:  string
+    priceCurrencyCode?: string
+    priceCurrencySymbol?: string
+    variationDescription?: string
+    availableSupply?:string,
+    default:boolean
+
+}
+
+export type ProductImageDataSubmit = {
+    name: string
+    type: string
+    data: string
 }

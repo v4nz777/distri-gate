@@ -10,6 +10,10 @@
                 <button class="btn btn-xs btn-outline text-white" @click.once="alertstore.hideAlert(alert.id)">CLOSE</button>
             </AlertItemError>
 
+            <AlertItemSuccess :alert="alert" v-else-if="alert.type==='success'">
+                <button class="btn btn-xs btn-outline text-white" @click.once="alertstore.hideAlert(alert.id)">CLOSE</button>
+            </AlertItemSuccess>
+
         </li>
         
     </TransitionGroup>

@@ -10,7 +10,7 @@
             <div class="dropdown dropdown-end" v-if="userstore.isAuthenticated">
                 <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
                     <div class="w-10 rounded-full">
-                        <UseImage :src="userstore.currentUser.avatar?userstore.currentUser.avatar:''">
+                        <UseImage :src="userstore.currentUser?.avatar?userstore.currentUser.avatar:''">
                             <template #error>
                                 <img alt="Tailwind CSS Navbar component" src='/profile.png' />
                             </template>

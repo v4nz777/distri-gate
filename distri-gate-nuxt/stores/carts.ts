@@ -1,10 +1,14 @@
 import type { Item,GiftCode } from "@/types"
 import { skipHydrate } from "pinia"
+import { useAlertStore } from "./alerts"
 
 export const useCart = defineStore('cart-store', ()=> {
 
+        const alertstore = useAlertStore()
+        const userstore = useUserStore()
+
         // STATES
-        
+        const cartOwner = useLocalStorage<string|null>('cartOwner', null)
         const items = useLocalStorage('cartItems',[] as Item[])
         const cartGiftCode = useLocalStorage('cartGiftCode', '')
         const discount = useLocalStorage('discount',0)
@@ -30,7 +34,9 @@ export const useCart = defineStore('cart-store', ()=> {
         
         const cartSubTotalAmount = computed(()=> {
             let price = 0
-            items.value.forEach((item:Item)=>price += (item.product?item.product.price.amount:0) * item.quantity)
+            items.value.forEach((item:Item)=>{
+                price += (item.productVariant.price_amount??0) * item.quantity
+            })
             return price
         }) 
 
@@ -58,9 +64,11 @@ export const useCart = defineStore('cart-store', ()=> {
          * Otherwise, returns `new`  (this will add new item)
         */
         const addItem = (newItem:Item)=> {
-            return new Promise<string>((resolve,reject)=> {    
-                const foundIndex = items.value.findIndex((i)=>i.id === newItem.id)
+            return new Promise<string>((resolve,reject)=> {   
+
+                const foundIndex = items.value.findIndex((i)=>i.variantId === newItem.variantId)
                 
+                setLoggedUserAsCartOwner() //
 
                 if(foundIndex > -1){ // Avoid duplication
                     items.value[foundIndex].quantity += newItem.quantity
@@ -73,22 +81,47 @@ export const useCart = defineStore('cart-store', ()=> {
             })
         }
 
-        const changeQuantity = (id:number, action:string) => {
+        const changeQuantity = (id:string, action:string) => {
             const foundIndex = getMyIndex(id)
-            if(action === 'increase')items.value[foundIndex].quantity ++
-            else if(action === 'decrease')items.value[foundIndex].quantity--
+            if(action === 'increase') increaseQuantity(id)
+            else if(action === 'decrease')decreaseQuantity(id)
 
             if(items.value[foundIndex].quantity < 1) removeItem(id)
         }
 
-        const removeItem = (id:number) => {
+        const increaseQuantity = (variantId:string)=> {
+            const foundIndex = getMyIndex(variantId)
+
+            const variantSupply = items.value[foundIndex].productVariant.supply_quantity
+            const quantityFromCart = getItemCountFromCart(variantId)
+            if(variantSupply - quantityFromCart < 1){
+                alertstore.addAlert({
+                    id:'temp',
+                    type:'error',
+                    message:`Limited supply! Max ${variantSupply} per purchase.`,
+                    shown: true
+                })
+                return
+            }
+
+            items.value[foundIndex].quantity ++
+        }
+
+        const decreaseQuantity = (variantId:string)=> {
+            const foundIndex = getMyIndex(variantId)
+            items.value[foundIndex].quantity--
+        }
+
+
+
+        const removeItem = (id:string) => {
             const foundIndex = getMyIndex(id)
             items.value.splice(foundIndex,1)
 
            
         }
 
-        const getMyIndex = (id:number) => items.value.findIndex((i:Item)=>i.id === id)
+        const getMyIndex = (id:string) => items.value.findIndex((i:Item)=>i.variantId === id)
 
         /**  Input an Array of valid codes from giftcodes database */
         const validateGiftCode = (sourceValidGiftCodes:GiftCode[]) => {
@@ -103,6 +136,15 @@ export const useCart = defineStore('cart-store', ()=> {
             }
         }
 
+        const getItemCountFromCart = (itemId:string)=> {
+            return items.value[getMyIndex(itemId)]?.quantity
+        }
+
+
+        const setLoggedUserAsCartOwner = ()=>{
+            cartOwner.value = userstore.loggedUser
+        }
+
 
         const reset =  ()=> {
             items.value = [] as Item[]
@@ -110,6 +152,7 @@ export const useCart = defineStore('cart-store', ()=> {
             discount.value = 0
             tax.value = 2.0
             cartIsNavigated.value = false
+            cartOwner.value = null
         }
 
 
@@ -120,6 +163,10 @@ export const useCart = defineStore('cart-store', ()=> {
             if(value.length < 1)navigateTo('/products')
         },{deep:true})
 
+
+        watch(()=>userstore.loggedUser, (newValue)=>{
+            if(newValue && cartOwner.value && newValue!==cartOwner.value) reset()
+        })
 
  
  
@@ -148,6 +195,8 @@ export const useCart = defineStore('cart-store', ()=> {
         getMyIndex,
         validateGiftCode,
         removeItem,
+        getItemCountFromCart,
+        setLoggedUserAsCartOwner,
         reset
 
     }

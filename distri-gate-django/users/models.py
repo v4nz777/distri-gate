@@ -38,8 +38,9 @@ class Address(models.Model):
     country = models.CharField(max_length=50)
     postal_code = models.CharField(max_length=10)
     full_address_string = models.CharField(max_length=500, blank=True, null=True)
-    resident = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="resident")
-    
+    contact_person = models.CharField(max_length=256, blank=True, null=True)
+    contact = models.CharField(max_length=50, blank=True, null=True)
+
     class Meta:
         verbose_name_plural = "Adresses"
 

@@ -4,27 +4,31 @@ import type { PrivateUser, AddressSubmit } from "~/types"
 export const useUserStore = defineStore('userStore', ()=> {
 
 
-
-    const currentUser = useLocalStorage<PrivateUser>('currentUser', {} as PrivateUser)
-
-
-    const fetching = useLocalStorage<boolean>('fetching',false)
-
-    const exiting = useLocalStorage<boolean>('exiting',false)
+    const cartstore = useCart()
 
 
-    const isAuthenticated = computed(()=>Object.keys(currentUser.value).length > 0)
+    const loggedUser = useLocalStorage<string>('loggedUser', null)
 
-    const toAuthenticate = ref(false)
+    const currentUser = ref<PrivateUser|null>(null)
+
+    const fetching = ref<boolean>(false)
+
+    const exiting = ref<boolean>(false)
+    
+    const isAuthenticated = computed(():boolean=>currentUser.value !== null && currentUser.value !== undefined)
+
+    const loginDialogTrigger = ref(false)
 
 
 
     const setUser = async(username:string) => {
+        if(!username)return
+
         const { data, pending, error, refresh } = await useFetch(`/api/auth/${username}`,{})
         fetching.value = pending.value
-      
         currentUser.value = data.value as PrivateUser
-        return { pending, error}
+
+        return currentUser.value
     }
 
 
@@ -34,15 +38,17 @@ export const useUserStore = defineStore('userStore', ()=> {
         const { pending,error } = await useFetch('/api/auth/logout', { 
             method: 'POST',
             body: {
-                username: currentUser.value.username
+                username: currentUser.value?.username
             },
             onRequestError(error){
                 console.log(error)
             }
         })
        
-        currentUser.value = {} as PrivateUser
+        currentUser.value = null
+        cartstore.reset()
         exiting.value = pending.value
+        loggedUser.value = null
     }
 
     const changeUserAddress = async (address:AddressSubmit)=> {
@@ -70,7 +76,24 @@ export const useUserStore = defineStore('userStore', ()=> {
         fetching.value = pending.value
 
         currentUser.value = data.value as unknown as PrivateUser
+    }
 
+
+    
+    /** Needs to have:
+     * - DialogModal `<dialog>` element with login form
+     * - Dialog element must be put inside a layout component
+     * - Must call `hideLoginFormDialog` function every successful login
+     * - the hide function must be called within the login function
+     * - Finally, must have a watcher to watch the `loginDialogTrigger` and call this function if `true`
+     * - Put the watcher a component where the `<dialog>` is located
+     */
+    const showLoginFormDialog = ()=> {
+        loginDialogTrigger.value = true
+    }
+
+    const hideLoginFormDialog = ()=> {
+        loginDialogTrigger.value = false
     }
 
 
@@ -81,13 +104,16 @@ export const useUserStore = defineStore('userStore', ()=> {
         currentUser:skipHydrate(currentUser),
         fetching:skipHydrate(fetching),
         isAuthenticated:skipHydrate(isAuthenticated),
+        loggedUser:skipHydrate(loggedUser),
         exiting,
-        toAuthenticate,
+        loginDialogTrigger,
 
         setUser,
         clearUser,
         changeUserAddress,
-        changeUserAddressById
+        changeUserAddressById,
+        showLoginFormDialog,
+        hideLoginFormDialog
      }
 
 })

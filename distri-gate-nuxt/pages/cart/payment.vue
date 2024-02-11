@@ -1,12 +1,19 @@
 <template>
     <div class="w-full flex justify-center">
         <ClientOnly>
-            <CartPayment />
+            <CartPayment @backwards="navigateTo('/cart/checkout')" @forwards="pay()"/>
         </ClientOnly>
     </div>
 </template>
 
 <script setup lang="ts">
+    const userstore = useUserStore()
+    const pay = ()=> {
+        if(!userstore.isAuthenticated)userstore.showLoginFormDialog()
+        else navigateTo('/cart/complete')
+    }
+
+
     definePageMeta({
         layout: 'cart',
         pageTransition: {
