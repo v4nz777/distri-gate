@@ -30,6 +30,45 @@ export const useUserStore = defineStore('userStore', ()=> {
 
         return currentUser.value
     }
+    interface NewUser {
+        username: string
+        password:string
+        confirm:string
+        email:string
+    }
+
+    const createUser = async(inputData:NewUser) => {
+        debugger
+        if(inputData.password !== inputData.confirm){
+            alert('Error @42: Password didnt match');
+            return
+        }
+            
+        if(!inputData.username || !inputData.email || !inputData.password){
+            alert('Error @47: Invalid form, some required fields are empty');
+            return
+        }
+
+        const { data, pending, error, refresh } = await useFetch(`/api/auth/register`,{
+            method: 'POST',
+            body: {
+                username: inputData.username,
+                password: inputData.password,
+                email: inputData.email
+            },
+
+            onResponseError({request,response,options}){
+                throw Error(response.statusText)
+            },
+            onResponse({request,response,options}){
+                return response
+            }
+        })
+        fetching.value = pending.value
+        //currentUser.value = data.value as any
+        debugger
+        return data
+    }
 
 
 
@@ -109,6 +148,7 @@ export const useUserStore = defineStore('userStore', ()=> {
         loginDialogTrigger,
 
         setUser,
+        createUser,
         clearUser,
         changeUserAddress,
         changeUserAddressById,

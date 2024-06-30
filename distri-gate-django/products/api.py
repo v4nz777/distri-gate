@@ -27,7 +27,7 @@ def get_products(request:HttpRequest):
 
 
 @app.get('get_product/{id}', response=ProductSchema)
-def get_product(request:HttpRequest,id:int):
+def get_product(request:HttpRequest,id:str):
     product = get_object_or_404(Product, id=id)
     return product
 
@@ -44,6 +44,7 @@ def add_or_update_product(request:HttpRequest):
 
     if not user.is_superuser:
         return JsonResponse({'message': 'Must be a superuser to access'}, status=401)
+    
     
     try:
         product = Product.objects.get(id=product_input.temporary_id)
