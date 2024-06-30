@@ -161,8 +161,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS HEADERS OPTION
 # 
 
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'https://distri-gate-front.vercel.app']
-
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'https://distri-gate-front.vercel.app', 'https://distri-gate-server.vercel.app']
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = (
     "DELETE",
     "GET",
