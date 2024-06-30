@@ -32,7 +32,7 @@
 
     const logoLoaded = ref(false)
     const itemsLoaded = ref(false)
-    const featuredItems = ref<number[]>([])
+    const featuredItems = ref<string[]>([])
 
     definePageMeta({
         layout: 'home'
@@ -46,14 +46,14 @@
         writeAnimationElement?.addEventListener('animationend', ()=>{
             itemsLoaded.value = true
             setTimeout(() => {
-                featuredItems.value.push(1) 
+                featuredItems.value.push('4JjgiqPPhYGvtpwKYWKYVi') 
             }, 500);
 
             setTimeout(() => {
-                featuredItems.value.push(2) 
+                featuredItems.value.push('4JjgiqPPhYGvtpwKYWKYVi') 
             }, 750);
             setTimeout(() => {
-                featuredItems.value.push(3) 
+                featuredItems.value.push('4JjgiqPPhYGvtpwKYWKYVi') 
             }, 1000);
             
          

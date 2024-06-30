@@ -1,7 +1,7 @@
 <template>
     <div class="card w-52 bg-base-100 shadow-xl hover:scale-105 h-full" @click="navigateTo('/products')">
         <figure class=" w-full h-[270px] min-h-[260px]">
-            <UseImage :src="product?product.variations[0].variant_image??''" alt="" class="rounded-xl h-full">
+            <UseImage :src="product?product.variations[0].variant_image??'':''"  class="rounded-xl h-full">
                 <template #loading>
                     <LogoAnimationLoading class="w-full h-full object-contain"/>
                 </template>
@@ -27,12 +27,10 @@
 
     const { productId } = defineProps(['productId'])
 
-    const product = ref<Product|null>({} as Product)
 
-    onMounted(async () => {
-      const { data, pending, error, refresh } = await useFetch(`/api/products/${productId}`)
-    //   product.value = data.value
-    })
+    const { data:product, pending, error, refresh } = await useFetch<Product>(`/api/products/${productId}`)
+    
+
 
 </script>
 

@@ -14,12 +14,12 @@
         <div class="divider h-4">
             OR
         </div>
-        <a class="link link-hover text-center">CREATE ACCOUNT</a>
+        <a class="link link-hover text-center" @click="emits('registration-clicked')">CREATE ACCOUNT</a>
     </div>
 </template>
 
 <script setup lang="ts">
-    const emits = defineEmits(['success'])
+    const emits = defineEmits(['success', 'registration-clicked'])
 
     const userstore = useUserStore()
     const alertstore = useAlertStore()

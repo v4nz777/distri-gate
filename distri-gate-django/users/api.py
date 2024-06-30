@@ -95,6 +95,28 @@ def get_private_user(request:HttpRequest,username:str)->User:
             return JsonResponse({'message':message}, status_code=403)
         else:
             return user
+
+@app.post('register_user/', response=PrivateUserSchema)
+def register_user(request:HttpRequest)->User:
+    if request.method == "POST":
+        decoded_body = request.body.decode('utf-8')
+        data = json.loads(decoded_body)
+        username = data['username']
+        password = data['password']
+        email = data['email']
+
+
+        try:
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+                email=email
+            )
+            return JsonResponse({'message': 'Successfully created user!'},status=200)
+        except:
+            return JsonResponse({'message': f'{username} not found, may be deleted from the database!'},status=404)
+
+
         
 
 

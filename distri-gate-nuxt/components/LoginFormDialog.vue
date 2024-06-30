@@ -1,12 +1,14 @@
 <template>
     <dialog ref="loginForm" class="modal">
-        <LoginForm @success="userstore.hideLoginFormDialog()"/>
+        <LoginForm @success="userstore.hideLoginFormDialog()" v-if="mode==='login'" @registration-clicked="mode='registration'"/>
+        <RegistrationForm v-else-if="mode==='registration'" @login-clicked="mode='login'"/>
     </dialog>
 </template>
 
 <script setup lang="ts">
     const userstore = useUserStore()
     const loginForm = ref<HTMLDialogElement>()
+    const mode = ref('login')
     
 
     onMounted(async () => {
